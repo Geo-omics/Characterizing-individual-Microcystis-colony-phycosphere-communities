@@ -12,13 +12,13 @@ Information on files:
 *.taxonomy = The taxonomy assigned to each OTU. Note that Silvia does not have conventional assignments for Proteobacteria classes (for example many Betaproteobacteria are listed as Gammaprotoebacteria), so some of the higher level taxonomies of genus/families were changed to reflect who they are listed in NCBI.  
 *.metadata = Metadata and water chemistry data associated with each DNA sample  
 
-Note these scripts require a shell/linux computing environment and R version 4.0.1
+Note these scripts require a shell/linux computing environment and R version 4.0.1  
 
-Major third party software used here (outside of the R packages listed in the respective markdown files) are:
-FastQC v. 0.11.8
-BBDuk v. 38.84
-MOTHUR v. 1.43.0
-Minimum Entropy Decomposition v. 2.1
+Major third party software used here (outside of the R packages listed in the respective markdown files) are:  
+FastQC v. 0.11.8  
+BBDuk v. 38.84  
+MOTHUR v. 1.43.0  
+Minimum Entropy Decomposition v. 2.1  
 
 Please address all questions or requests to:  
 Derek Smith (smitdere@umich.edu)  
