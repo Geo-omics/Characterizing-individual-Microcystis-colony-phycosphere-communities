@@ -9,7 +9,7 @@ Note that the 2014 whole water community sequences were published as part of a l
 Information on files:  
 *.files.QCd = mapping file for mothur to assemble paired sequences  
 *.shared = OTU abundance tables for colony and/or whole water community samples  
-*.taxonomy = The taxonomy assigned to each OTU. (Note that Silvia does not have conventional assignments for Proteobacteria classes, so some of those taxonomies were corrected manually after the OTU building analysis).  
+*.taxonomy = The taxonomy assigned to each OTU. Note that Silvia does not have conventional assignments for Proteobacteria classes (for example many Betaproteobacteria are listed as Gammaprotoebacteria), so some of the higher level taxonomies of genus/families were changed to reflect the taxonomies listed in NCBI.  
 *.metadata = Metadata and water chemistry data associated with each DNA sample  
 
 Note these scripts require a shell/linux computing environment and R version 4.0.1
