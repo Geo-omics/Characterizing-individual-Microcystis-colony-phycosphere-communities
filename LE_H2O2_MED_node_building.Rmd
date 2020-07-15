@@ -1,0 +1,234 @@
+---
+title: "LE_H2O2_MED_node_building"
+output: html_document
+---
+
+This Markdown document details how MED nodes were constructed using sequences from Berry et al. 2017 study on Lake Erie cyanobacterial bloom communities published in Environmental Microbiology, sequences from H2O2 mesocosm experiments conducted on natural Lake Erie communities in 2017-2019, and individual Microcystis colonies collected in 2019.  
+
+The analysis was ran on Vondamm in the following location:
+/geomicro/data22/smitdere/LE_H2O2_Experiments/MiSeq_Data_MED_with_2014_WLE_data/
+
+QC'd and assembled the overlapping reads following the first steps of the mothur OTU protocol listed in a separate markdown document. The final step these analyses have in common is the unqiue.seqs() step, in which redundancy was removed after trimming the alignment.
+
+Output files are:
+LE_H2O2.trim.contigs.good.unique.good.filter.count_table
+LE_H2O2.trim.contigs.good.unique.good.filter.unique.fasta
+
+Copied these output files from the working directory for the 97% OTU generation into the MED working directory listed above.
+
+Skip the pre-clustering step in mothur, we want to let the MED algorith remove any sequencing artifacts or uninformative variation.
+
+remove chimeras with vsearch, using the most abundant sequences in my samples as a reference:
+```{r}
+mothur > chimera.vsearch(fasta=LE_H2O2.trim.contigs.good.unique.good.filter.unique.fasta, count=LE_H2O2.trim.contigs.good.unique.good.filter.count_table, dereplicate=t)
+```
+
+Output File Names:
+LE_H2O2.trim.contigs.good.unique.good.filter.denovo.vsearch.pick.count_table
+LE_H2O2.trim.contigs.good.unique.good.filter.unique.denovo.vsearch.chimeras
+LE_H2O2.trim.contigs.good.unique.good.filter.unique.denovo.vsearch.accnos
+
+remove chimeras from the fasta file:
+```{r}
+mothur > remove.seqs(fasta=LE_H2O2.trim.contigs.good.unique.good.filter.unique.fasta, accnos=LE_H2O2.trim.contigs.good.unique.good.filter.unique.denovo.vsearch.accnos)
+```
+
+Output File Names: 
+LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.fasta
+
+Inspecting the sequences:
+```{r}
+mothur > summary.seqs(fasta=current, count=current)
+```
+
+                Start   End     NBases  Ambigs  Polymer NumSeqs
+Minimum:        1       605     220     0       3       1
+2.5%-tile:      1       607     253     0       4       275768
+25%-tile:       1       607     253     0       4       2757679
+Median:         1       607     253     0       4       5515358
+75%-tile:       1       607     253     0       5       8273037
+97.5%-tile:     1       607     254     0       6       10754948
+Maximum:        3       607     255     0       8       11030715
+Mean:   1       606     253     0       4
+# of unique seqs:       747067
+total # of seqs:        11030715
+
+Went from 11208521 to 11030715 sequences (1.59% were removed as chimeras)
+
+Classify the sequences using the Silva database as a reference:
+```{r}
+mothur > classify.seqs(fasta=LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.fasta, count=LE_H2O2.trim.contigs.good.unique.good.filter.denovo.vsearch.pick.count_table, reference=silva.nr_v138.align, taxonomy=silva.nr_v138.tax, cutoff=80)
+```
+Output File Names: 
+LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.nr_v138.wang.taxonomy
+LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.nr_v138.wang.tax.summary
+
+Remove sequences classified as unknown, Eukaryotes, Chloroplasts, and Mitochondria:
+```{r}
+mothur > remove.lineage(fasta=LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.fasta, count=LE_H2O2.trim.contigs.good.unique.good.filter.denovo.vsearch.pick.count_table, taxonomy=LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.nr_v138.wang.taxonomy, taxon=Chloroplast-Mitochondria-unknown-Eukaryota)
+```
+
+Output File Names:
+LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.nr_v138.wang.pick.taxonomy
+LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.nr_v138.wang.accnos
+LE_H2O2.trim.contigs.good.unique.good.filter.denovo.vsearch.pick.pick.count_table
+LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.pick.fasta
+
+Create an updated taxonomy summary file:
+```{r}
+mothur > summary.tax(taxonomy=current, count=current)
+```
+
+Output File Names: 
+LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.nr_v138.wang.pick.tax.summary
+
+Remove the Mock and PCR control groups from the dataset:
+```{r}
+mothur > remove.groups(count=LE_H2O2.trim.contigs.good.unique.good.filter.denovo.vsearch.pick.pick.count_table, fasta=LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.pick.fasta, taxonomy=LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.nr_v138.wang.pick.taxonomy, accnos=LE_H2O2.remove_groups.accnos)
+```
+
+Output File names: 
+LE_H2O2.trim.contigs.good.unique.good.filter.denovo.vsearch.pick.pick.pick.count_table
+LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.pick.pick.fasta
+LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.nr_v138.wang.pick.pick.taxonomy
+
+Run Michelle's mothur2oligo script to get all the sequences (redundant) in a format for the MED pipeline: 
+It can be found here: https://github.com/DenefLab/MicrobeMiseq/tree/master/mothur2oligo  
+```{bash}
+nohup bash mothur2oligo.sh &> mothur2oligo.log &
+```
+
+Output File name:
+LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.pick.pick.pick.redundant.fasta_headers-replaced.fasta
+
+Add gaps to the ends of shorter sequences in the alignment, so that everything is the same length:
+```{bash}
+o-pad-with-gaps LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.pick.pick.pick.redundant.fasta_headers-replaced.fasta
+```
+
+Output File name:
+LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.pick.pick.pick.redundant.fasta_headers-replaced.fasta-PADDED-WITH-GAPS
+
+Remove any positions in the alignment that are all gaps:
+```{bash}
+o-trim-uninformative-columns-from-alignment LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.pick.pick.pick.redundant.fasta_headers-replaced.fasta-PADDED-WITH-GAPS
+```
+
+Output File name:
+LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.pick.pick.pick.redundant.fasta_headers-replaced.fasta-PADDED-WITH-GAPS-TRIMMED
+
+How many sequences do we have total?
+8,537,854
+
+Build the MED nodes:
+```{bash}
+nohup decompose -M 100 -V 7 -o MED_OUTPUT/ -R LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.pick.pick.pick.redundant.fasta_headers-replaced.fasta-PADDED-WITH-GAPS-TRIMMED &> decompose_M100_V97_R.log &
+```
+
+The M flag refers to the minimum substantive abundance, which is the cutoff point for when a node is determined as noise and removed from the analysis. In the manuscript, the authors recommend setting M as N/10000, where N is the number of sequences in the dataset. In this case, any nodes with less than 854 sequences are flagged and removed. However in their help forums, users have noted problems with removing too many sequences following this guideline for larger datasets like this one. Meren suggested doing a max of 100 for -M. 
+
+The R flag will attempt to reassign outliers to the most appropriate nodes.
+
+The max number of discriminating nucleotide positions to use was left at the default 4.
+
+Allowed a maximum of 7 nucleotide differences between a read and the representative sequence for each node
+
+Let's experiment with only allowing 4 nucleotide differences maximum between a read and the representative sequences for each node
+```{bash}
+nohup decompose -M 100 -V 4 -o MED_OUTPUT_M100_V4/ -R LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.pick.pick.pick.redundant.fasta_headers-replaced.fasta-PADDED-WITH-GAPS-TRIMMED &> decompose_M100_V97_R.log &
+```
+
+Using M=100 and V=7:
+Outliers removed after replacement: 138,635
+% of total sequences removed: 138,635/8,537,854 = 1.62 %
+Number of nodes: 2198
+
+Using M=100 and V=4:
+Outliers removed after replacement: 224,048
+% of total sequences removed: 224,048/8,537,854 = 2.62 %
+Number of nodes: 2200
+
+Let's compare the above results to the suggested setting of M. Set V to 4 because the default setting of V was set to 3 based on our marker gene length, but we are allowing up to 4 discriminating nucleotide positions:
+```{bash}
+nohup decompose -M 854 -V 4 -o MED_OUTPUT_M854/ -R LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.pick.pick.pick.redundant.fasta_headers-replaced.fasta-PADDED-WITH-GAPS-TRIMMED &> decompose_M100_V97_R.log &
+```
+Using defaults with replacement:
+M=854 and V=4:
+Outliers removed after replacement: 594,238
+% of total sequences removed: 594,238/8,537,854 = 7.0%
+Number of nodes: 709
+
+And again with the suggested M but using no replacement of outliers (default):
+```{bash}
+nohup decompose -M 854 -V 4 -o MED_OUTPUT_M854_no_R/ LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.pick.pick.pick.redundant.fasta_headers-replaced.fasta-PADDED-WITH-GAPS-TRIMMED &> decompose_M100_V97_R.log &
+```
+Using defaults without replacement:
+M=854 and V=4:
+Outliers removed after replacement: 810,405
+% of total sequences removed: 810,405/8,537,854 = 9.49 %
+Number of nodes: 709
+
+More outliers were removed when V=4, but only two additional nodes were made. Let's use the V=4 results.
+Many nodes were lost using M=854, but the percentage of reads removed only increased by ~4%. Let's inspect the data of M=100 and M=854 more closey to see which is most appropriate to use.  
+
+Replacement removed more sequences, but did not change the number of nodes.  
+
+
+Let's compare this result with what was obtained using mothur's preclustered sequences: 
+Renamed the sequences without preclustering before running the script to avoid overwriting any data:  
+```{bash}
+mv LE_H2O2.trim.contigs.good.unique.good.filter.unique.pick.pick.pick.pick.redundant.fasta_headers-replaced.fasta LE_H2O2.seqs_for_MED.fasta
+```
+Rerun Michelle's mothur to oligo scrip on the preclustered sequences generated before input into OptiClust OTU clustering:  
+```{bash}
+nohup bash mothur2oligo.sh &> mothur2oligo.log &
+```
+Files called by script were:  
+taxonomy="MiSeq_Data_mothur_with_2014_WLE_data/LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.nr_v138.wang.pick.pick.taxonomy"  
+fasta="MiSeq_Data_mothur_with_2014_WLE_data/LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.fasta"  
+count="MiSeq_Data_mothur_with_2014_WLE_data/LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.pick.pick.count_table" 
+
+Renamed the new output file to have a more workable file name:  
+```{bash}
+mv LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.pick.redundant.fasta_headers-replaced.fasta LE_H2O2.seqs_for_MED_preclustered.fasta
+```
+
+Add gaps to the ends of shorter sequences in the alignment, so that everything is the same length:
+```{bash}
+o-pad-with-gaps LE_H2O2.seqs_for_MED_preclustered.fasta
+```
+
+Output File name:
+LE_H2O2.seqs_for_MED_preclustered.fasta-PADDED-WITH-GAPS
+
+Remove any positions in the alignment that are all gaps:
+```{bash}
+o-trim-uninformative-columns-from-alignment LE_H2O2.seqs_for_MED_preclustered.fasta-PADDED-WITH-GAPS
+```
+
+Output File name:
+LE_H2O2.seqs_for_MED_preclustered.fasta-PADDED-WITH-GAPS-TRIMMED
+
+There are 8512911 sequences.
+
+```{bash}
+nohup decompose -M 851 -V 4 -o MED_OUTPUT_M854_no_R_preclustered/ LE_H2O2.seqs_for_MED_preclustered.fasta-PADDED-WITH-GAPS-TRIMMED &> decompose_M100_V4_preclustered.log &
+```
+Results of MED with the preclustered sequences:
+M=851 and V=4:
+Outliers removed after replacement: 587,490
+% of total sequences removed: 587,490/8,512,911 = 6.9 %
+Number of nodes: 672
+
+There are fewer nodes, but fewer sequences were removed as outliers.
+
+Classify the node representative sequences using mothur's Wang method:
+```{r}
+mothur > classify.seqs(fasta=MED_OUTPUT_M100_V4/NODE-REPRESENTATIVES.fasta, reference=silva.nr_v138.align, taxonomy=silva.nr_v138.tax, cutoff=80)
+
+mothur > classify.seqs(fasta=MED_OUTPUT_M854/NODE-REPRESENTATIVES.fasta, reference=silva.nr_v138.align, taxonomy=silva.nr_v138.tax, cutoff=80)
+
+mothur > classify.seqs(fasta=MED_OUTPUT_M854_no_R/NODE-REPRESENTATIVES.fasta, reference=silva.nr_v138.align, taxonomy=silva.nr_v138.tax, cutoff=80)
+
+mothur > classify.seqs(fasta=MED_OUTPUT_M854_no_R_preclustered/NODE-REPRESENTATIVES.fasta, reference=silva.nr_v138.align, taxonomy=silva.nr_v138.tax, cutoff=80)
+```

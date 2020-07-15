@@ -1,0 +1,504 @@
+---
+title: "LE_H2O2_mothur_OTU_building"
+output:
+  html_document:
+    df_print: paged
+---
+Below we describe the steps involved for raw read processing, OTU building, and OTU classification using mothur. This includes samples from H2O2 field incubation experiments in addition to Microcystis colony samples from 2019 bloom in western Lake Erie.
+
+At time of analysis (10-Feb-2020), silva ref database version on the geomicro servers is currently v132. On the website, v138 is available. Let's update the reference database used to align reads and classify sequences first.
+
+Below are the the steps for updating the silva nonredundant ref database. I followed the instructions in Pat Schloss's readme for v132 to make it mothur compatible.
+
+1. First download the data from Arb-Silva.
+2. decompress data:
+```{bash}
+#wd: /geomicro/data22/smitdere/Silva_reference_alignment_v138/
+gunzip SILVA_138_SSURef_NR99_05_01_20_opt.arb.gz
+```
+
+3. open database in arb:
+```{bash}
+#wd: /geomicro/data22/smitdere/Silva_reference_alignment_v138/
+arb SILVA_138_SSURef_NR99_05_01_20_opt.arb
+```
+
+4. Within arb do this (you have to be logged into alpena):
+-click search
+-set the first search field to 'ARB_color' and set it to 1
+-click on the equal sign until it indicates not equal (this removes low quality reads and chimeras)
+-click "search" (yielded 447,349 hits)
+-click "Mark Listed Unmark Rest"
+-close the "search and query" window
+-click File -> export -> export to external format
+-in the new window, set "export" to "marked", "filter" to "none", and "compress" to "no"
+-in field for "choose an output file name" make sure the path is to the correct directory and enter "silva.full_v138.fasta"
+-under "select a format" choose "fasta_mothur.eft"
+-click "Go"
+-close arb after the export is complete
+-the file had the file extension twice, rename using mv command
+
+5. Screen the sequences (make sure you run this in comics to get the most recent version of mothur):
+```{bash}
+#wd: /geomicro/data22/smitdere/Silva_reference_alignment_v138/
+mothur "#screen.seqs(fasta=silva.full_v138.fasta, start=1044, end=43116, maxambig=5, processors=16); pcr.seqs(start=1044, end=43116, keepdots=T); degap.seqs(); unique.seqs();"
+
+#identify the unique sequences without regard to their alignment
+grep ">" silva.full_v138.good.pcr.ng.unique.fasta | cut -f 1 | cut -c 2- > silva.full_v138.good.pcr.ng.unique.accnos
+
+#get the unique sequences without regard to their alignment
+mothur "#get.seqs(fasta=silva.full_v138.good.pcr.fasta, accnos=silva.full_v138.good.pcr.ng.unique.accnos)"
+
+#generate alignment file
+mv silva.full_v138.good.pcr.pick.fasta silva.nr_v138.align
+
+#generate taxonomy file
+grep '>' silva.nr_v138.align | cut -f1,3 | cut -f2 -d'>' > silva.nr_v138.full
+```
+
+From Pat Schloss's readme:
+"The [above] mothur commands above do several things. First the `screen.seqs` command removes sequences that are not full length and have more than 5 ambiguous base calls. Note: this will remove a number of Archaea since the ARB RN reference database lets in shorter (>900 bp) archaeal 16S rRNA gene sequences. Second, pcr.seqs convert any base calls that occur before position 1044 and after 43116 to `.` to make them only span the region between the 27f and 1492r priming sites. Finally, it is possible that weird things happen in the alignments and so we unalign the sequences (degap.seqs) and identify the unique sequences (unique.seqs). We then convert the resulting fasta file into an accnos file so that we can go back into mothur and pull out the unique sequences from the aligned file (`get.seqs`)"
+
+6. Format the taxonomy file
+
+First, get the SILVA taxa mapping file from arb:
+-Click the "Download" tab, then select "Archive"
+-Download this file: current/Exports/taxonomy/tax_slv_ssu_ref_138.txt.gz
+
+Put the file in the right format with R (done on vondamm):
+```{r}
+#wd: /geomicro/data22/smitdere/Silva_reference_alignment_v138/
+map.in <- read.table("tax_slv_ssu_138.txt",header=F,sep="\t",stringsAsFactors=F)
+map.in <- map.in[,c(1,3)]
+colnames(map.in) <- c("taxlabel","taxlevel")
+taxlevels <- c("root","domain","major_clade","superkingdom","kingdom","subkingdom","infrakingdom","superphylum","phylum","subphylum","infraphylum","superclass","class","subclass","infraclass","superorder","order","suborder","superfamily","family","subfamily","genus")
+taxabb <- c("ro","do","mc","pk","ki","bk","ik","pp","ph","bp","ip","pc","cl","bc","ic","po","or","bo","pf","fa","bf","ge")
+tax.mat <- matrix(data="",nrow=nrow(map.in),ncol=length(taxlevels))
+tax.mat[,1] <- "root"
+colnames(tax.mat) <- taxlevels
+outlevels <- c("domain","phylum","class","order","family","genus")
+
+ for (i in 1:nrow(map.in)) {
+                taxname <- unlist(strsplit(as.character(map.in[i,1]), split=';'))
+                #print(taxname);
+
+                while ( length(taxname) > 0) {
+                        #regex to look for exact match
+
+                        tax.exp <- paste(paste(taxname,collapse=";"),";",sep="")
+                        tax.match <- match(tax.exp,map.in$taxlabel)
+                        tax.mat[i,map.in[tax.match,2]] <- tail(taxname,1)
+                        taxname <- head(taxname,-1)
+                }
+ }
+
+for (i in 1:nrow(tax.mat)) {
+                #this fills in the empty gaps by using the closest higher taxonomic level appended with an abbreviation for the current taxonomic level
+                #if you don't want this behavior, cut it out
+                for (j in 1:ncol(tax.mat)) {
+                        if(tax.mat[i,j] < 0) { tax.mat[i,j] <- paste(tmptax,taxabb[j],sep="_")}
+                        else { tmptax <- tax.mat[i,j]}
+                }
+
+                #this maps the new name to the input taxonomic levels
+                map.in[i,"taxout"] <- paste(paste(tax.mat[i,outlevels],collapse=";"),";",sep="")
+}
+
+# replace spaces with underscores
+map.in$taxout <- gsub(" ","_",map.in$taxout)
+
+# bring in the old taxonomic levels from SILVA and remap them using the new levels
+tax.in <- read.table("silva.nr_v138.full",header=F,stringsAsFactors=F,sep="\t")
+colnames(tax.in) <- c("taxid","taxlabel")
+
+tax.in$taxlabel <- gsub(";[[:space:]]+$", ";", tax.in$taxlabel)
+tax.in$id <- 1:nrow(tax.in)
+tax.write <- merge(tax.in,map.in,all.x=T,sort=F)
+tax.write <- tax.write[order(tax.write$id),]
+
+#we want to see whether everything has 6 taxonomic level (kingdom to genus)
+getDepth <- function(taxonString){
+  initial <- nchar(taxonString)
+  removed <- nchar(gsub(";", "", taxonString))
+  return(initial-removed)
+}
+depth <- getDepth(tax.write$taxout) 
+summary(depth) #should all be 6 and there should be no NAs
+bacteria <- grepl("Bacteria;", tax.write$taxout)
+archaea <- grepl("Archaea;", tax.write$taxout)
+eukarya <- grepl("Eukaryota;", tax.write$taxout)
+tax.write[depth > 6 & bacteria,]
+#[1] taxlabel taxid    id       taxlevel taxout  
+#<0 rows> (or 0-length row.names), good to go
+tax.write[depth > 6 & archaea,]
+#[1] taxlabel taxid    id       taxlevel taxout  
+#<0 rows> (or 0-length row.names), good to go
+tax.write[depth > 6 & eukarya,]
+#[1] taxlabel taxid    id       taxlevel taxout  
+#<0 rows> (or 0-length row.names), good to go
+write.table(tax.write[,c("taxid","taxout")],file="silva.full_v138.tax",sep="\t",row.names=F,quote=F,col.names=F)
+```
+
+7. Build the taxonomy file:
+```{bash}
+mothur "#get.seqs(taxonomy=silva.full_v138.tax, accnos=silva.full_v138.good.pcr.ng.unique.accnos)"
+mv silva.full_v138.pick.tax silva.nr_v138.tax
+```
+
+8. Build the SEED databases:
+```{bash}
+grep ">" silva.nr_v138.align | cut -f 1,2 | grep -w "100" | cut -f 1 | cut -c 2- > silva.seed_v138.accnos
+
+mothur "#get.seqs(fasta=silva.nr_v138.align, taxonomy=silva.full_v138.tax, accnos=silva.seed_v138.accnos)"
+
+mv silva.nr_v138.pick.align silva.seed_v138.align
+
+mv silva.full_v138.pick.tax silva.seed_v138.tax
+```
+
+Start the OTU building/classification pipeline with Mothur, following the Schloss lab SOP (https://www.mothur.org/wiki/MiSeq_SOP, accessed on 11-Feb-2020).
+
+All mothur analysis ran on Cayman/Vondamm at /geomicro/data22/smitdere/LE_H2O2_Experiments/MiSeq_Data/ unless specified otherwise.
+
+Used mothur version 1.43.0 which is available in comics.
+
+Rename the files to remove "-" in the file names, this formatting is incompatible with mothur:
+```{bash}
+for i in *.gz; do mv -v "$i" "$(echo "$i" | sed -e 's/-/_/g')"; done
+```
+
+Download the amplicon sequences from the 2014 western Lake Erie Microcystis bloom published in Berry et al 2017.
+```{r}
+nohup bash sra_explorer_curl_wrapper Berry2017_sra_explorer_fastq_download.sh &> Berry2017_sra_explorer_fastq_download.sh.log &
+```
+
+First, make the stability file, which shows which forward and reverse files are paired:
+```{r}
+mothur > make.file(inputdir=., type=gz, prefix=LE_H2O2)
+```
+
+The make.file command did not fill out the group names as desired, had to manually fix some entries.  
+This fixed file is available for download on GitHub.  
+
+Generate and few fastqc reports:
+```{bash}
+mkdir FASTQC_BIE2017_0042
+fastqc BIE2017_0042_S92_L001_R1_001.fastq.gz BIE2017_0042_S92_L001_R2_001.fastq.gz -o FASTQC_BIE2017_0042 -t 30 --contaminants /geomicro/data22/smitdere/Erie2014_coAssembly/adapters.txt --extract --format fastq
+
+mkdir FASTQC_BIE2018_0147
+fastqc BIE2018_0147_S152_L001_R1_001.fastq.gz BIE2018_0147_S152_L001_R2_001.fastq.gz -o FASTQC_BIE2018_0147 -t 30 --contaminants /geomicro/data22/smitdere/Erie2014_coAssembly/adapters.txt --extract --format fastq
+```
+
+For the forward reads, the per base quality score is mostly above Q30, with some bases dropping to Q20 around position 189. The average quality per read is Q37, but it ranges from Q26-Q37. However, there is a steep peak at Q37 in the distribution of read qualities. Most of the sequences are 251 bp long, there seems to be an extra base added at the end of the reads (common in Illumina sequence data).
+
+The reverse reads have much poorer quality scores. The quality ranges from Q16-Q38 at most of the sequence length. When look at the distribution of average read qualities, it peaks at Q35, but there is a much shallower tail, meaning that there are many more reads with a lower mean quality score. There are also some reads with lengths less than 250 bp.
+
+Use this script to quality check all the fastqs:
+```{bash}
+nohup bash MiSeq_QC_bbduk.sh &> MiSeq_QC_bbduk.log &
+```
+
+This script will start by removing any sequences below 250 bp and trimming down reads with a length of 251 bp to 250 bp. Then It will trim of the right end of each read until the average quality score of the whole read is Q20. Afterwards, any reads that where trimmed below 50% of the starting read length (125 bp) are removed from the data because those were poor quality reads.
+
+Create a new "stability" file that contains the file names of the QC'd reads using BBEdit.
+
+Moved all the old mothur output files to /geomicro/data22/smitdere/LE_H2O2_Experiments/MiSeq_Data/Mothur_out_no_bbduk/
+
+Assemble the contigs using the quality trimmed and filtered reads:
+```{r}
+mothur > make.contigs(file=LE_H2O2.files.QCd, processors=16)
+```
+
+Rename the output files from make.contigs so that the .files extension is removed from the name.
+```{bash}
+mv LE_H2O2.files.trim.contigs.fasta LE_H2O2.trim.contigs.fasta
+mv LE_H2O2.files.contigs.groups LE_H2O2.contigs.groups
+```
+
+Inspect the resulting contigs:
+```{r}
+mothur > summary.seqs(fasta=LE_H2O2.trim.contigs.fasta)
+```
+
+Remove contigs with ambiguous base calls and length longer than 255 bp
+```{r}
+mothur > screen.seqs(fasta=LE_H2O2.trim.contigs.fasta, group=LE_H2O2.contigs.groups, maxambig=0, maxlength=255)
+```
+
+Make the sequences unique:
+```{r}
+mothur > unique.seqs(fasta=LE_H2O2.trim.contigs.good.fasta)
+```
+
+Generate the count table:
+```{r}
+mothur > count.seqs(name=LE_H2O2.trim.contigs.good.names, group=LE_H2O2.contigs.good.groups)
+```
+
+Inspect the sequences:
+```{r}
+mothur > summary.seqs(count=LE_H2O2.trim.contigs.good.count_table)
+```
+
+		      Start	     End	   NBases	   Ambigs	   Polymer	   NumSeqs
+Minimum:	  1	       171	    171	       0          3	         1
+2.5%-tile:	1	       253	    253	       0	        4        280608
+25%-tile:	  1	       253	    253	       0	        4	       2806071
+Median: 	  1	       253	    253	       0	        4	       5612142
+75%-tile:	  1	       253	    253	       0	        5	       8418212
+97.5%-tile:	1	       254	    254	       0	        6	       10943675
+Maximum:	  1	       255	    255	       0	        42	     11224282
+Mean:	      1	       253	    253	       0	        4
+# of unique seqs:	817181
+total # of seqs:	11224282
+
+It took 10 secs to summarize 11224282 sequences.
+
+Align the sequences to the silva V4 database:
+```{r}
+mothur > align.seqs(fasta=LE_H2O2.trim.contigs.good.unique.fasta, reference=silva.nr_v138.v4.align)
+```
+
+Inspect the alignment:
+```{r}
+mothur > summary.seqs(fasta=LE_H2O2.trim.contigs.good.unique.align, count=LE_H2O2.trim.contigs.good.count_table)
+```
+
+		       Start	  End	   NBases	   Ambigs	   Polymer	  NumSeqs
+Minimum:	   1	     1	      1	        0	        1	         1
+2.5%-tile:	1968	 11550	   253	      0	        4	      280608
+25%-tile:	  1968	 11550	   253	      0	        4	      2806071
+Median: 	  1968	 11550	   253	      0	        4	      5612142
+75%-tile:	  1968	 11550	   253	      0	        5	      8418212
+97.5%-tile:	1968	 11550	   254	      0	        6	      10943675
+Maximum:	  13425	 13425	   255	      0	        42	    11224282
+Mean:	       1970	 11549	   252	      0	        4
+# of unique seqs:	817181
+total # of seqs:	11224282
+
+It took 21 secs to summarize 11224282 sequences.
+
+Some sequences had poor alignment and fall outside the gene region.
+
+Remove all sequences that did not align properly, or have a homopolymer stretch higher than 8 bp.
+```{r}
+mothur > screen.seqs(fasta=LE_H2O2.trim.contigs.good.unique.align, count=LE_H2O2.trim.contigs.good.count_table, summary=LE_H2O2.trim.contigs.good.unique.summary, start=1968, end=11550, maxhomop=8)
+```
+
+Look at the results:
+```{r}
+mothur > summary.seqs(fasta=current, count=current)
+```
+
+		        Start	  End	   NBases	   Ambigs	   Polymer	   NumSeqs
+Minimum:	    1	   11550	   220	     0	        3	          1
+2.5%-tile:	1968	 11550	   253	     0	        4	       280214
+25%-tile:	  1968	 11550	   253	     0	        4	       2802131
+Median: 	  1968	 11550	   253 	     0	        4	       5604261
+75%-tile:	  1968	 11550	   253	     0	        5	       8406391
+97.5%-tile:	1968	 11550	   254	     0	        6	       10928308
+Maximum:	  1968	 13425	   255	     0	        8	       11208521
+Mean:	      1967	 11550	   253	     0	        4
+# of unique seqs:	811751
+total # of seqs:	11208521
+
+It took 23 secs to summarize 11208521 sequences.
+
+There some sequences that overhang past the ends of the V4 region.
+
+Trim overhangs and remove positions that only contain gaps from the alignment:
+```{r}
+mothur > filter.seqs(fasta=LE_H2O2.trim.contigs.good.unique.good.align, vertical=T, trump=.)
+```
+
+Length of filtered alignment: 607
+Number of columns removed: 12818
+Length of the original alignment: 13425
+Number of sequences used to construct filter: 811751
+
+Remove any redundancy that was created:
+```{r}
+mothur > unique.seqs(fasta=LE_H2O2.trim.contigs.good.unique.good.filter.fasta, count=LE_H2O2.trim.contigs.good.good.count_table)
+```
+
+Pre-cluster the sequences, allowing 2 nt difference between the sequences:
+```{r}
+mothur > pre.cluster(fasta=LE_H2O2.trim.contigs.good.unique.good.filter.unique.fasta, count=LE_H2O2.trim.contigs.good.unique.good.filter.count_table, diffs=2)
+```
+
+remove chimeras with vsearch, using the most abundant sequences in my samples as a reference:
+```{r}
+mothur > chimera.vsearch(fasta=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.fasta, count=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.count_table, dereplicate=t)
+```
+
+remove chimeras from the fasta file:
+```{r}
+mothur > remove.seqs(fasta=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.fasta, accnos=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.accnos)
+```
+
+Inspecting the sequences:
+```{r}
+mothur > summary.seqs(fasta=current, count=current)
+```
+
+		       Start	   End	    NBases	    Ambigs	    Polymer	     NumSeqs
+Minimum:	   1	     605	      220	         0	         3	          1
+2.5%-tile:	 1	     607	      253	         0	         4	       275323
+25%-tile:	   1	     607	      253	         0	         4	       2753227
+Median: 	   1	     607	      253	         0	         4	       5506454
+75%-tile:	   1	     607        253	         0	         5	       8259680
+97.5%-tile:	 1	     607        254          0	         6	       10737584
+Maximum:	   3	     607        255	         0	         8	       11012906
+Mean:	       1	     606        253	         0	         4
+# of unique seqs:	269686
+total # of seqs:	11012906
+
+It took 5 secs to summarize 11012906 sequences.
+
+Went from 11208521 to 11012906 sequences (1.75 % were chimeras)
+
+Classify the sequences using the Silva database as a reference:
+```{r}
+mothur > classify.seqs(fasta=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.fasta, count=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.count_table, reference=silva.nr_v138.align, taxonomy=silva.nr_v138.tax, cutoff=80)
+```
+
+Remove sequences classified as unknown, Eukaryotes, Chloroplasts, and Mitochondria:
+```{r}
+mothur > remove.lineage(fasta=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.fasta, count=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.count_table, taxonomy=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.nr_v138.wang.taxonomy, taxon=Chloroplast-Mitochondria-unknown-Eukaryota)
+```
+
+Create an updated taxonomy summary file:
+```{r}
+mothur > summary.tax(taxonomy=current, count=current)
+```
+
+The sequences are now all QC’d and classified. Next we will assess error rates using the mock community:
+
+First, pull out all the sequences in the Mock samples:
+```{r}
+mothur > get.groups(count=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.pick.count_table, fasta=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.fasta, taxonomy=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.nr_v138.wang.pick.taxonomy, accnos=LE_H2O2_ZymoMock.accnosgroups)
+```
+
+Measure error rates of the sequences in the Mock sample:
+```{r}
+mothur > seq.error(fasta=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.fasta, count=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.pick.pick.count_table, reference=ZymoMock_ssurRNA.fasta, aligned=F)
+```
+
+The error rate is 2.9981ee-05
+
+Cluster the mock sample sequences into OTUs so that we know how many spurious OTUs we have:
+
+Make the OTUs using Opticlust:
+```{r}
+mothur > dist.seqs(fasta=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.fasta, cutoff=0.03)
+
+mothur > cluster(column=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.dist, count=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.pick.pick.count_table, method=opti, cutoff=0.03)
+
+mothur > make.shared(list=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.opti_mcc.list, count=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.pick.pick.count_table, label=0.03)
+
+mothur > classify.otu(list=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.opti_mcc.list, count=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.pick.pick.count_table, taxonomy=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.nr_v138.wang.pick.pick.taxonomy, label=0.03)
+```
+
+Rename the files:
+```{bash}
+mv LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.opti_mcc.shared LE_H2O2.ZymosMock.Opti.shared
+mv LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.opti_mcc.0.03.cons.taxonomy LE_H2O2.ZymosMock.Opti.taxonomy
+```
+
+Let's assess the compositional bias:
+```{r}
+library(tidyr)
+library(dplyr)
+#import dataframes:
+Opti.OTUs <- read.table("LE_H2O2.ZymosMock.Opti.shared", sep = "\t", header=T)
+Opti.tax <- read.table("LE_H2O2.ZymosMock.Opti.taxonomy", sep = "\t", header=T)
+
+#Fix up OTU table and merge with taxonomy table:
+rownames(Opti.OTUs) <- Opti.OTUs$Group
+drop <- c("label", "numOtus", "Group")
+Opti.OTUs <- Opti.OTUs[ , !(names(Opti.OTUs) %in% drop)]
+Opti.OTUs <- t(Opti.OTUs) #transpose table so that OTUs are row names for merging
+rownames(Opti.tax) <- Opti.tax$OTU
+drop <- "OTU"
+Opti.tax <- Opti.tax[ , !(names(Opti.tax) %in% drop)]
+Opti.OTUs.merged <- merge(Opti.OTUs, Opti.tax, by="row.names")
+Opti.OTUs.merged$Taxonomy <- gsub("\\([0-9]*\\)", "", Opti.OTUs.merged$Taxonomy)
+#Divide the taxonomy into separate columns for each rank for sorting
+Opti.OTUs.merged <- separate(Opti.OTUs.merged, Taxonomy, c("Domain", "Phylum", "Class", "Order", "Family", "Genus"), sep=";", remove=TRUE)
+
+#remove all taxa not from Mock sample:
+mock_taxa <- c("Pseudomonas", "Escherichia-Shigella", "Salmonella", "Lactobacillus", "Enterococcus", "Staphylococcus", "Listeria", "Bacillus")
+Opti.OTUs.merged <- filter(Opti.OTUs.merged, Opti.OTUs.merged$Genus %in% mock_taxa)
+
+#Remove OTUs with two or fewer sequences:
+Opti.OTUs.merged <- Opti.OTUs.merged[ Opti.OTUs.merged$Size >= 2, ]
+
+#Convert to percent abundance:
+Opti.OTUs.merged[, 2:5] <- apply(Opti.OTUs.merged[,2:5], 2, function(x) (x / sum(x)) *100 )
+
+#Sum by Genus:
+drop <- c("Row.names", "Size")
+Opti.OTUs.merged.summed <- Opti.OTUs.merged[ , !(names(Opti.OTUs.merged) %in% drop)] 
+Opti.OTUs.merged.summed <- aggregate(. ~ Domain+Phylum+Class+Order+Family+Genus, Opti.OTUs.merged.summed, sum)
+Opti.OTUs.merged.summed$Mean_Perc_Comp <- rowMeans(Opti.OTUs.merged.summed[,7:10])
+Opti.OTUs.merged.summed$STDEV <- apply(Opti.OTUs.merged.summed[,7:10],1,sd)
+Opti.OTUs.merged.summed$Target_Perc_Comp <- c(17.4, 9.9, 10.1, 18.4, 14.1, 4.2, 10.4, 15.5)
+Opti.OTUs.merged.summed$Diff <- abs(Opti.OTUs.merged.summed$Mean_Perc_Comp - Opti.OTUs.merged.summed$Target_Perc_Comp)
+Opti.OTUs.merged.summed$Diff_STDEV <- Opti.OTUs.merged.summed$STDEV
+Opti.OTUs.merged.summed$Percent_error <- (Opti.OTUs.merged.summed$Diff / Opti.OTUs.merged.summed$Target_Perc_Comp) * 100
+Opti.OTUs.merged.summed$Percent_error_STDEV <- Opti.OTUs.merged.summed$Percent_error * (Opti.OTUs.merged.summed$Diff_STDEV/Opti.OTUs.merged.summed$Diff)
+```
+
+Taxonoy               Mean_Percent_Comp     Target_Percent_Comp      Difference
+Bacillus                   13.3 +/- 1.2%          17.4%                5.3 - 2.9% (22.9% error)
+Enterococcus               8.4 +/- 0.4%           9.9%                 2.1 - 1.3% (16.7% error)
+Escherichia                11.1 +/- 0.9%          10.1%                1.9 - 0.1% (7.9% error)
+Lactobacillus              11.8 +/- 1.8%          18.4%                8.4 - 4.8% (35.9% error)
+Listeria                   11.0 +/- 1.2%          14.1%                4.3 - 1.9% (20.6% error)
+Pseudomonas                9.6 +/- 1.4%           4.2%                 6.8 - 4.0% (124% error)
+Salmonella                 17.1 +/- 1.5%          10.4%                8.2 - 5.2% (66.3% error)
+Staphylococcus             17.6 +/- 1.3%          15.5%                3.4 - 0.8% (13.5% error)
+
+Remove the Mock and PCR control groups from the dataset:
+```{r}
+mothur > remove.groups(count=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.pick.count_table, fasta=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.fasta, taxonomy=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.nr_v138.wang.pick.taxonomy, accnos=LE_H2O2.remove_groups.accnos)
+```
+
+Cluster the OTUs using Opticlust:
+```{r}
+mothur > dist.seqs(fasta=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.fasta, cutoff=0.03)
+
+mothur > cluster(column=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.dist, count=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.pick.pick.count_table, method=opti)
+
+mothur > make.shared(list=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.opti_mcc.list, count=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.pick.pick.count_table, label=0.03)
+
+mothur > classify.otu(list=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.opti_mcc.list, count=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.pick.pick.count_table, taxonomy=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.nr_v138.wang.pick.pick.taxonomy, label=0.03)
+```
+
+Rename the output files so that the they are shorter/easier to work with:
+```{bash}
+mv LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.opti_mcc.0.03.cons.taxonomy LE_H2O2.taxonomy
+
+mv LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.opti_mcc.shared LE_H2O2.shared
+```
+
+Create a representative sequence fasta file for the OTUs:  
+```{r}
+mothur > get.oturep(column=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.dist, list=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.opti_mcc.list, count=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.denovo.vsearch.pick.pick.pick.count_table, cutoff=0.03, fasta=LE_H2O2.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.fasta)
+```
+
+Comparing ref sequences to Emirge sequences.  
+---
+Blast the representative OTU sequences against the Emirge sequeces constructed from the 2014 WLE metagenomes:  
+Done on vondamm in /geomicro.  
+
+Below is the commandline:  
+```{bash}
+#wd: /geomicro/data22/smitdere/Erie2014_coAssembly/
+#Initial blast
+nohup blastn -query LE_H2O2.repseq.degapped.fasta -db Emirge_all.good.clustered.fasta -outfmt "7 std qlen slen qcovs" -out LE_H2O2.OTU.repseq_vs_Emirge.blastn &> LE_H2O2.OTU.repseq_vs_Emirge.log &
+
+#Filter out hits with e-value below 1e-5 and percent id below 80%:
+perl /geomicro/data1/COMMON/scripts/BlastTools/postBlast.pl -p 80 -e 1e-5 -b LE_H2O2.OTU.repseq_vs_Emirge.blastn -o LE_H2O2.OTU.repseq_vs_Emirge.postblast.txt
+```
+
