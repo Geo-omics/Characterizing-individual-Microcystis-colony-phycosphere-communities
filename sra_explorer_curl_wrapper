@@ -1,0 +1,56 @@
+#!/bin/bash
+set -euo pipefail
+
+if [[ $# == 1 ]]; then
+    script=$1
+else
+    echo >&2 "the wrapper requires the original SRA Explorer curl script as input file (given via command line option"
+    exit 2
+fi
+
+[[ -e "$script" ]] || { echo >&2 "file does not exist: $script"; exit 2; }
+
+declare -a urls outfiles
+
+while read -r curl Lopt url oopt outfile; do
+    [[ "$curl" == curl ]] || echo "failed parsing script, expected 'curl', got: $curl"
+    [[ "$Lopt" == -L ]] || echo "failed parsing script -L option expected, got: $Lopt"
+    [[ "$oopt" == -o ]] || echo "failed parsing script -o option expected, got: $oopt"
+    urls+=("$url")
+    outfiles+=("$outfile")
+done < <(grep "^curl " "$script")
+
+declare -i remaining=${#urls[@]}
+
+while true; do
+    declare -a badurls=() badoutfiles=()
+    for ((i=0; i<${#urls[@]}; i++)); do
+        url=${urls[i]}
+        outfile=${outfiles[i]}
+        echo >&2 -n "Trying $url "
+        if [[ -e "$outfile" ]]; then
+            echo >&2 "[output file exists, skipping]"
+        elif curl -s -S --fail -L "$url" -o "$outfile"; then
+            echo >&2 "[OK]"
+        else
+            errcode=$?
+            echo >&2 "Download failed with error $errcode: url: $url, outfile: $outfile"
+            badurls+=("$url")
+            badoutfiles+=("$outfile")
+            rm -f -- "$outfile"
+        fi
+    done
+    if [[ ${#badurls[@]} -gt 0 ]]; then
+        urls=("${badurls[@]}")
+        outfiles=("${badoutfiles[@]}")
+        remaining=${#urls[@]}
+        if [[ remaining -gt 0 ]]; then
+            echo >&2
+            echo >&2 "Retrying $remaining downloads that have gone bad, if you see the same error happening over and over again..."
+            echo >&2
+        fi
+    else
+        echo >&2 "[ALL DONE]"
+        break
+    fi
+done
