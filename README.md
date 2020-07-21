@@ -1,4 +1,4 @@
-# Characterizing-individual-Microcystis-colony-phycosphere-communities
+# Characterizing Individual Microcystis Colony Phycosphere Communities
 This repository holds all metadata tables, scripts, and R code for the bioinformatic and statistical analysis associated with the manuscript: Individual Microcystis colonies harbor distinct bacterial communities that differ by Microcystis oligotype and with time.
 
 The raw sequence data can be found in NCBI SRA under the following BioProjects:  
