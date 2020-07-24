@@ -119,7 +119,7 @@ Most of the rare OTUs only reach a maximum abundance of 0.25% or less of the rea
 #Get a list of OTUs to remove. They are only present in 1 sample at a maximum relative abundance less than 0.1%
 MC_2019.merged.raretaxa$Max_abund <- rare_otu_max_counts
 rownames(MC_2019.merged.raretaxa) <- MC_2019.merged.raretaxa$Row.names
-rares_to_remove <- rownames(MC_2019.merged.raretaxa[ MC_2019.merged.raretaxa$Max_abund >= 0.1, ])
+rares_to_remove <- rownames(MC_2019.merged.raretaxa[ MC_2019.merged.raretaxa$Max_abund <= 0.1, ])
 
 #Reprocess the data frame, removing these taxa:
 #Load dataframes:
@@ -183,7 +183,7 @@ MC_2019.merged.long <- merge(MC_2019.merged.long, MC_2019.metadata, by="Sample_I
 drop <- c("Sample_Type", "Amplification", "Enough_reads") #remove these columns, because they are no longer useful
 MC_2019.merged.long <- MC_2019.merged.long[, !(names(MC_2019.merged.long) %in% drop) ]
 ```
-We removed 56 OTUs flagged as rare, keeping ~88%.
+We removed 226 OTUs flagged as rare, keeping ~52%.
 
 Top Otus
 ----
@@ -1209,7 +1209,7 @@ MC_2019.merged.long$Phylum <- gsub("Planctomycetota", "Planctomycetes", MC_2019.
 MC_2019.merged.long$Phylum <- gsub("Spirochaetota", "Spirochaetes", MC_2019.merged.long$Phylum)
 MC_2019.merged.long$Phylum <- gsub("Verrucomicrobiota", "Verrucomicrobia", MC_2019.merged.long$Phylum)
 ```
-A total of 68 OTUs were removed as either rares or contaminants, keeping 86% of the total OTUs.
+A total of 238 OTUs were removed as either rares or contaminants, keeping ~50% of the total OTUs.
 
 Reanalysis of cleaned datatables  
 ----
@@ -1422,7 +1422,7 @@ NMDS_3_3D_filtered <- plot_ly(NMDS_3.filtered.scores, x = ~NMDS1, y = ~NMDS2, z 
                       yaxis = list(title = "NMDS2"),
                       zaxis = list(title = "NMDS3")),
           legend = list(title = "Morphotype"),
-         annotations = list(text = "Stress = 0.12",
+         annotations = list(text = "Stress = 0.11",
                             showarrow = F,
                             align="left",
                             x=0.8,
@@ -1952,7 +1952,7 @@ mantel_df <- mantel_df[2:45,]
 mantel_df <- merge(mantel_df, MC_2019.metadata, by.x = "row.names", by.y = "Sample_ID", all.x = TRUE, all.y = FALSE)
 
 #Extract OTU abundance dataframe:
-mantel_OTU_abund <- as.matrix(mantel_df[,2:405]) #The as.matrix will convert from factor to character (necessary step)
+mantel_OTU_abund <- as.matrix(mantel_df[,2:235]) #The as.matrix will convert from factor to character (necessary step)
 mantel_OTU_abund <- apply(mantel_OTU_abund, 2, as.numeric) #Need to convert the data to numeric from character.
 #Get vectors of environmental parameters:
 mantel_df_Temp <- mantel_df$Temp
@@ -2846,7 +2846,7 @@ rownames(LE_H2O2_2019_all.shared) <- LE_H2O2_2019_all.shared$Group
 drop <- c("label", "numOtus", "Group")
 LE_H2O2_2019_all.shared <- LE_H2O2_2019_all.shared[ , !(names(LE_H2O2_2019_all.shared) %in% drop)]
 LE_H2O2_2019_all.shared <- t(LE_H2O2_2019_all.shared) #transpose table so that OTUs are row names for merging
-LE_H2O2_2019_all.shared <- LE_H2O2_2019_all.shared[rowSums(LE_H2O2_2019_all.shared) != 0,] #Remove Otus that are absent from colony samples
+LE_H2O2_2019_all.shared <- LE_H2O2_2019_all.shared[rowSums(LE_H2O2_2019_all.shared) != 0,] #Remove empty OTUs
 rownames(LE_H2O2_2019_all.taxonomy) <- LE_H2O2_2019_all.taxonomy$OTU
 drop <- "OTU"
 LE_H2O2_2019_all.taxonomy <- LE_H2O2_2019_all.taxonomy[ , !(names(LE_H2O2_2019_all.taxonomy) %in% drop)]
@@ -3194,7 +3194,7 @@ Filt_Shannon_hist <- filter(LE_H2O2_2019_all.merged.long, Row.names == "Otu00001
 
 WW_alpha_hist <- WW_Shannon_hist - WW_chao_hist / WW_Rich_hist
 Filt_alpha_hist <- Filt_Shannon_hist - Filt_chao_hist / Filt_Rich_hist
-full_alpha_hist <- colony_alpha_hist / field_alpha_hist / Filt_alpha_hist
+full_alpha_hist <- colony_alpha_hist / WW_alpha_hist / Filt_alpha_hist
 full_alpha_hist
 ggsave("full_alpha_hist_plot.pdf", plot = full_alpha_hist, width = 18, height = 33, units = "cm", dpi=320)
 ```
