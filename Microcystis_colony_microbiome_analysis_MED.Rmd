@@ -1,0 +1,859 @@
+---
+title: "Microcystis Colony Microbiome Analysis (using MED)"
+output: html_notebook
+---
+
+The approach was to isolate single Microcystis colonies (100-300 um) into droplets, then sequence the V4 region of all the bacteria in the colony. Colonies were collected in Summer of 2019.  
+
+The steps for the MED node building are described in a separate markdown document: LE_H2O2_MED_node_building.Rmd *Separated out the single colony samples (flagged with the MC2019 sortchem) from the field samples in the shared file.  
+
+Loading Requirements  
+---
+
+Load the required packages:  
+```{r}
+library(ggplot2)
+library(vegan)
+library(dplyr)
+library(tidyr)
+library(plotly)
+library(indicspecies)
+library(patchwork)
+library(lubridate)
+library(dendextend)
+library(forcats)
+```
+
+Pre-processing and Inspection of Coloniality  
+---
+Import the Microcystis colony data: 
+First, lets start with the data where M = 100.
+```{r}
+#Load dataframes:
+MC_2019.shared_M100 <- read.table("MC2019-MATRIX-PERCENT-M100.txt", header = TRUE, sep="\t")
+MC_2019.taxonomy_M100 <- read.table("NODE-REPRESENTATIVES-M100.nr_v138.wang.taxonomy", header = TRUE, sep="\t")
+MC_2019.metadata <- read.table("MC_2019_metadata.txt", header = TRUE, sep="\t")
+
+#Fix up OTU table and merge with taxonomy table:
+rownames(MC_2019.shared_M100) <- MC_2019.shared_M100$samples
+drop <- "samples"
+MC_2019.shared_M100 <- MC_2019.shared_M100[ , !(names(MC_2019.shared_M100) %in% drop)]
+MC_2019.shared_M100 <- t(MC_2019.shared_M100) #transpose table so that nodes are row names for merging
+rownames(MC_2019.taxonomy_M100) <- MC_2019.taxonomy_M100$Node
+
+MC_2019.merged_M100 <- merge(MC_2019.shared_M100, MC_2019.taxonomy_M100, by.x="row.names", by.y="Node", all = FALSE)
+#Divide the taxonomy into separate columns for each rank for sorting
+MC_2019.merged_M100 <- separate(MC_2019.merged_M100, Taxonomy, c("Domain", "Phylum", "Class", "Order", "Family", "Genus"), sep=";", remove=TRUE)
+
+#Filter dataframe so that we save the control samples into a separate dataframe for later
+keep <- MC_2019.metadata$Sample_ID[ MC_2019.metadata$Colony_Number == "PBS Blank" ] 
+taxcols <- c("Row.names", "Domain", "Phylum", "Class", "Order", "Family", "Genus")
+MC_2019.merged_M100.controls <- MC_2019.merged_M100[ , names(MC_2019.merged_M100) %in% keep | names(MC_2019.merged_M100) %in% taxcols]
+
+#Remove samples that were controls and had a low number of reads:
+drop <- MC_2019.metadata$Sample_ID[ MC_2019.metadata$Enough_reads == "No" ]
+MC_2019.merged_M100 <- MC_2019.merged_M100[ , !(names(MC_2019.merged_M100) %in% drop)]
+
+#Remove the Mock Sample:
+MC_2019.merged_M100 <- MC_2019.merged_M100[ , names(MC_2019.merged_M100) != "MC2019_Mock"]
+
+#Calculate the observation frequency of each node, add to dataframe:
+otu_nonzero_counts <- apply(MC_2019.merged_M100[2:45], 1, function(y) sum(length(which(y > 0))))
+otu_obs_freq <- ( otu_nonzero_counts / 44 ) * 100
+MC_2019.merged_M100$otu_obs_freq <- otu_obs_freq
+
+#Remove any OTUs not present in the colony samples:
+MC_2019.merged_M100 <- MC_2019.merged_M100[ MC_2019.merged_M100$otu_obs_freq !=0, ]
+
+#Convert dataframe to long format:
+MC_2019.merged_M100.long <- gather(MC_2019.merged_M100, Sample_ID, Perc_abund, 2:45)
+
+#Add colony metadata:
+MC_2019.merged_M100.long <- merge(MC_2019.merged_M100.long, MC_2019.metadata, by="Sample_ID", all.x = TRUE)
+drop <- c("Colony_Number", "Amplification", "Enough_reads") #remove these columns, because they are no longer useful
+MC_2019.merged_M100.long <- MC_2019.merged_M100.long[, !(names(MC_2019.merged_M100.long) %in% drop) ]
+```
+
+What is the composition of the Microcystis nodes in each sample?
+```{r}
+Microcystis_node_plot_M100 <- filter(MC_2019.merged_M100.long, Genus == "Microcystis_PCC-7914") %>%
+  ggplot(aes(fill=as.character(Row.names), y=Perc_abund, x=Sample_ID)) +
+  geom_bar(position="fill", stat="identity") +
+    theme(axis.title.x = element_blank(), 
+      axis.title.y = element_text(size=7, margin = margin(t = 0, r = 14, b = 0, l = 0)),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.text.x = element_text(size = 5, color = "black", angle=60, hjust=1,  margin = margin(t = 5, r = 0, b = 0, l = 0)),
+      axis.text.y = element_text(size = 7, color = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)),
+      legend.text = element_text(size=7),
+      legend.title = element_text(size=7),
+      axis.ticks.length = unit(-0.1, "cm"),
+      axis.ticks = element_line(size = 0.2)) +
+    ylab("Percent of Total Microcystis")
+Microcystis_node_plot_M100 + labs(fill = "Microcystis Node")
+ggsave("Microcystis_node_plot_M100.pdf", plot = Microcystis_node_plot_M100, width = 110, height = 80, units = "mm", dpi=320)
+```
+Most of the colonies appear to be colonial with some signal from minor nodes. There are 6 colonies that are an exception, and have an equal amount of two Microcystis nodes. This is different from the results obtained when oligotyping using the mothur preclustered sequences. All the colonies were dominated by one oligotype.  
+
+Let's compare this result with the nodes generated from using the recommended cutoffs for M:  
+```{r}
+#Load dataframes:
+MC_2019.shared_M854 <- read.table("MC2019-MATRIX-PERCENT-M854.txt", header = TRUE, sep="\t")
+MC_2019.taxonomy_M854 <- read.table("NODE-REPRESENTATIVES-M854.nr_v138.wang.taxonomy", header = TRUE, sep="\t")
+
+#Fix up OTU table and merge with taxonomy table:
+rownames(MC_2019.shared_M854) <- MC_2019.shared_M854$samples
+drop <- "samples"
+MC_2019.shared_M854 <- MC_2019.shared_M854[ , !(names(MC_2019.shared_M854) %in% drop)]
+MC_2019.shared_M854 <- t(MC_2019.shared_M854) #transpose table so that nodes are row names for merging
+rownames(MC_2019.taxonomy_M854) <- MC_2019.taxonomy_M854$Node
+
+MC_2019.merged_M854 <- merge(MC_2019.shared_M854, MC_2019.taxonomy_M854, by.x="row.names", by.y="Node", all = FALSE)
+#Divide the taxonomy into separate columns for each rank for sorting
+MC_2019.merged_M854 <- separate(MC_2019.merged_M854, Taxonomy, c("Domain", "Phylum", "Class", "Order", "Family", "Genus"), sep=";", remove=TRUE)
+
+#Filter dataframe so that we save the control samples into a separate dataframe for later
+keep <- MC_2019.metadata$Sample_ID[ MC_2019.metadata$Colony_Number == "PBS Blank" ] 
+taxcols <- c("Row.names", "Domain", "Phylum", "Class", "Order", "Family", "Genus")
+MC_2019.merged_M854.controls <- MC_2019.merged_M854[ , names(MC_2019.merged_M854) %in% keep | names(MC_2019.merged_M854) %in% taxcols]
+
+#Remove samples that were controls and had a low number of reads:
+drop <- MC_2019.metadata$Sample_ID[ MC_2019.metadata$Enough_reads == "No" ]
+MC_2019.merged_M854 <- MC_2019.merged_M854[ , !(names(MC_2019.merged_M854) %in% drop)]
+
+#Remove the Mock Sample:
+MC_2019.merged_M854 <- MC_2019.merged_M854[ , names(MC_2019.merged_M854) != "MC2019_Mock"]
+
+#Calculate the observation frequency of each node, add to dataframe:
+otu_nonzero_counts <- apply(MC_2019.merged_M854[2:45], 1, function(y) sum(length(which(y > 0))))
+otu_obs_freq <- ( otu_nonzero_counts / 44 ) * 100
+MC_2019.merged_M854$otu_obs_freq <- otu_obs_freq
+
+#Remove any OTUs not present in the colony samples:
+MC_2019.merged_M854 <- MC_2019.merged_M854[ MC_2019.merged_M854$otu_obs_freq !=0, ]
+
+#Convert dataframe to long format:
+MC_2019.merged_M854.long <- gather(MC_2019.merged_M854, Sample_ID, Perc_abund, 2:45)
+
+#Add colony metadata:
+MC_2019.merged_M854.long <- merge(MC_2019.merged_M854.long, MC_2019.metadata, by="Sample_ID", all.x = TRUE)
+drop <- c("Colony_Number", "Amplification", "Enough_reads") #remove these columns, because they are no longer useful
+MC_2019.merged_M854.long <- MC_2019.merged_M854.long[, !(names(MC_2019.merged_M854.long) %in% drop) ]
+```
+
+What is the composition of the Microcystis nodes in each sample using these cutoffs?
+```{r}
+Microcystis_node_plot_M854 <- filter(MC_2019.merged_M854.long, Genus == "Microcystis_PCC-7914") %>%
+  ggplot(aes(fill=as.character(Row.names), y=Perc_abund, x=Sample_ID)) +
+  geom_bar(position="fill", stat="identity") +
+    theme(axis.title.x = element_blank(), 
+      axis.title.y = element_text(size=7, margin = margin(t = 0, r = 14, b = 0, l = 0)),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.text.x = element_text(size = 5, color = "black", angle=60, hjust=1,  margin = margin(t = 5, r = 0, b = 0, l = 0)),
+      axis.text.y = element_text(size = 7, color = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)),
+      legend.text = element_text(size=7),
+      legend.title = element_text(size=7),
+      axis.ticks.length = unit(-0.1, "cm"),
+      axis.ticks = element_line(size = 0.2)) +
+    ylab("Percent of Total Microcystis")
+Microcystis_node_plot_M854 + labs(fill = "Microcystis Node")
+ggsave("Microcystis_node_plot_M854.pdf", plot = Microcystis_node_plot_M854, width = 110, height = 80, units = "mm", dpi=320)
+```
+
+Same result as before. If we don't allow replacement of outliers during node formation, will the results more closely match those from using the mothur preclustered sequences?  
+```{r}
+#Load dataframes:
+MC_2019.shared_M854_no_R <- read.table("MC2019-MATRIX-PERCENT-M854-noR.txt", header = TRUE, sep="\t")
+MC_2019.taxonomy_M854_no_R <- read.table("NODE-REPRESENTATIVES-M854-noR.nr_v138.wang.taxonomy", header = TRUE, sep="\t")
+
+#Fix up OTU table and merge with taxonomy table:
+rownames(MC_2019.shared_M854_no_R) <- MC_2019.shared_M854_no_R$samples
+drop <- "samples"
+MC_2019.shared_M854_no_R <- MC_2019.shared_M854_no_R[ , !(names(MC_2019.shared_M854_no_R) %in% drop)]
+MC_2019.shared_M854_no_R <- t(MC_2019.shared_M854_no_R) #transpose table so that nodes are row names for merging
+rownames(MC_2019.taxonomy_M854_no_R) <- MC_2019.taxonomy_M854_no_R$Node
+
+MC_2019.merged_M854_no_R <- merge(MC_2019.shared_M854_no_R, MC_2019.taxonomy_M854_no_R, by.x="row.names", by.y="Node", all = FALSE)
+#Divide the taxonomy into separate columns for each rank for sorting
+MC_2019.merged_M854_no_R <- separate(MC_2019.merged_M854_no_R, Taxonomy, c("Domain", "Phylum", "Class", "Order", "Family", "Genus"), sep=";", remove=TRUE)
+
+#Filter dataframe so that we save the control samples into a separate dataframe for later
+keep <- MC_2019.metadata$Sample_ID[ MC_2019.metadata$Colony_Number == "PBS Blank" ] 
+taxcols <- c("Row.names", "Domain", "Phylum", "Class", "Order", "Family", "Genus")
+MC_2019.merged_M854_no_R.controls <- MC_2019.merged_M854_no_R[ , names(MC_2019.merged_M854_no_R) %in% keep | names(MC_2019.merged_M854_no_R) %in% taxcols]
+
+#Remove samples that were controls and had a low number of reads:
+drop <- MC_2019.metadata$Sample_ID[ MC_2019.metadata$Enough_reads == "No" ]
+MC_2019.merged_M854_no_R <- MC_2019.merged_M854_no_R[ , !(names(MC_2019.merged_M854_no_R) %in% drop)]
+
+#Remove the Mock Sample:
+MC_2019.merged_M854_no_R <- MC_2019.merged_M854_no_R[ , names(MC_2019.merged_M854_no_R) != "MC2019_Mock"]
+
+#Calculate the observation frequency of each node, add to dataframe:
+otu_nonzero_counts <- apply(MC_2019.merged_M854_no_R[2:45], 1, function(y) sum(length(which(y > 0))))
+otu_obs_freq <- ( otu_nonzero_counts / 44 ) * 100
+MC_2019.merged_M854_no_R$otu_obs_freq <- otu_obs_freq
+
+#Remove any OTUs not present in the colony samples:
+MC_2019.merged_M854_no_R <- MC_2019.merged_M854_no_R[ MC_2019.merged_M854_no_R$otu_obs_freq !=0, ]
+
+#Convert dataframe to long format:
+MC_2019.merged_M854_no_R.long <- gather(MC_2019.merged_M854_no_R, Sample_ID, Perc_abund, 2:45)
+
+#Add colony metadata:
+MC_2019.merged_M854_no_R.long <- merge(MC_2019.merged_M854_no_R.long, MC_2019.metadata, by="Sample_ID", all.x = TRUE)
+drop <- c("Colony_Number", "Amplification", "Enough_reads") #remove these columns, because they are no longer useful
+MC_2019.merged_M854_no_R.long <- MC_2019.merged_M854_no_R.long[, !(names(MC_2019.merged_M854_no_R.long) %in% drop) ]
+```
+
+What is the composition of the Microcystis nodes in each sample using these cutoffs?
+```{r}
+MC_2019.merged_M854_no_R.long$Sample_ID <- factor(MC_2019.merged_M854_no_R.long$Sample_ID, levels=unique(MC_2019.merged_M854_no_R.long$Sample_ID[order(MC_2019.merged_M854_no_R.long$MC_node, MC_2019.merged_M854_no_R.long$Date_Collected)]), ordered = TRUE)
+
+#Plot
+Microcystis_node_plot_M854_no_R <- filter(MC_2019.merged_M854_no_R.long, Genus == "Microcystis_PCC-7914") %>% #Remove everything but Microcystis nodes
+  ggplot(aes(fill=as.character(Row.names), y=Perc_abund, x=Sample_ID)) +
+    geom_bar(position="fill", stat="identity") +
+    theme_classic() +
+    theme(
+      axis.line.x = element_line(size=0.1),
+      axis.line.y = element_line(size=0.1),
+      axis.title.x = element_text(size=10, margin = margin(t = 10, r = 0, b = 0, l = 0)), 
+      axis.title.y = element_text(size=10, margin = margin(t = 0, r = 10, b = 0, l = 0)),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.text.x = element_text(size = 5, color = "black", angle = 45,
+                                 margin = margin(t = 10, r = 0, b = 0, l = 0)),
+      axis.text.y = element_text(size = 8, color = "black", margin = margin(t = 0, r = 10, b = 0, l = 0)),
+      axis.ticks.length = unit(-0.1, "cm"),
+      axis.ticks = element_line(size = 0.1),
+      legend.text = element_text(size = 10), legend.title = element_text(size = 8)) +
+    ylab("Percent of Total Microcystis") +
+    xlab("Sampling Date")
+Microcystis_node_plot_M854_no_R <- Microcystis_node_plot_M854_no_R + labs(fill = "Microcystis Node")
+Microcystis_node_plot_M854_no_R
+ggsave("Microcystis_node_plot_M854_no_R.pdf", plot = Microcystis_node_plot_M854_no_R, width = 110, height = 80, units = "mm", dpi=600)
+```
+
+The data was cleaned up quite a bit when replacement was not used, however it did not remove the 50:50 split of Microcystis nodes observed with the other results.  
+
+Are these sequences oligotyped the same way as they were using the pre-clustered sequences in mothur?  
+```{r}
+#Load dataframes:
+MC_2019.shared_M854_precluster <- read.table("MC2019-MATRIX-PERCENT-M851-preclustered.txt", header = TRUE, sep="\t")
+MC_2019.taxonomy_M854_precluster <- read.table("NODE-REPRESENTATIVES-M851-preclustered.nr_v138.wang.taxonomy", header = TRUE, sep="\t")
+
+#Fix up OTU table and merge with taxonomy table:
+rownames(MC_2019.shared_M854_precluster) <- MC_2019.shared_M854_precluster$samples
+drop <- "samples"
+MC_2019.shared_M854_precluster <- MC_2019.shared_M854_precluster[ , !(names(MC_2019.shared_M854_precluster) %in% drop)]
+MC_2019.shared_M854_precluster <- t(MC_2019.shared_M854_precluster) #transpose table so that nodes are row names for merging
+rownames(MC_2019.taxonomy_M854_precluster) <- MC_2019.taxonomy_M854_precluster$Node
+
+MC_2019.merged_M854_precluster <- merge(MC_2019.shared_M854_precluster, MC_2019.taxonomy_M854_precluster, by.x="row.names", by.y="Node", all = FALSE)
+#Divide the taxonomy into separate columns for each rank for sorting
+MC_2019.merged_M854_precluster <- separate(MC_2019.merged_M854_precluster, Taxonomy, c("Domain", "Phylum", "Class", "Order", "Family", "Genus"), sep=";", remove=TRUE)
+
+#Filter dataframe so that we save the control samples into a separate dataframe for later
+keep <- MC_2019.metadata$Sample_ID[ MC_2019.metadata$Colony_Number == "PBS Blank" ] 
+taxcols <- c("Row.names", "Domain", "Phylum", "Class", "Order", "Family", "Genus")
+MC_2019.merged_M854_precluster.controls <- MC_2019.merged_M854_precluster[ , names(MC_2019.merged_M854_precluster) %in% keep | names(MC_2019.merged_M854_precluster) %in% taxcols]
+
+#Remove samples that were controls and had a low number of reads:
+drop <- MC_2019.metadata$Sample_ID[ MC_2019.metadata$Enough_reads == "No" ]
+MC_2019.merged_M854_precluster <- MC_2019.merged_M854_precluster[ , !(names(MC_2019.merged_M854_precluster) %in% drop)]
+
+#Remove the Mock Sample:
+MC_2019.merged_M854_precluster <- MC_2019.merged_M854_precluster[ , names(MC_2019.merged_M854_precluster) != "MC2019_Mock"]
+
+#Calculate the observation frequency of each node, add to dataframe:
+otu_nonzero_counts <- apply(MC_2019.merged_M854_precluster[2:45], 1, function(y) sum(length(which(y > 0))))
+otu_obs_freq <- ( otu_nonzero_counts / 44 ) * 100
+MC_2019.merged_M854_precluster$otu_obs_freq <- otu_obs_freq
+
+#Remove any OTUs not present in the colony samples:
+MC_2019.merged_M854_precluster <- MC_2019.merged_M854_precluster[ MC_2019.merged_M854_precluster$otu_obs_freq !=0, ]
+
+#Convert dataframe to long format:
+MC_2019.merged_M854_precluster.long <- gather(MC_2019.merged_M854_precluster, Sample_ID, Perc_abund, 2:45)
+
+#Add colony metadata:
+MC_2019.merged_M854_precluster.long <- merge(MC_2019.merged_M854_precluster.long, MC_2019.metadata, by="Sample_ID", all.x = TRUE)
+drop <- c("Colony_Number", "Amplification", "Enough_reads") #remove these columns, because they are no longer useful
+MC_2019.merged_M854_precluster.long <- MC_2019.merged_M854_precluster.long[, !(names(MC_2019.merged_M854_precluster.long) %in% drop) ]
+```
+
+What is the composition of the Microcystis nodes in each sample using the preclustered sequences?
+```{r}
+Microcystis_node_plot_M851_preclustered <- filter(MC_2019.merged_M854_precluster.long, Genus == "Microcystis_PCC-7914") %>%
+  ggplot(aes(fill=as.character(Row.names), y=Perc_abund, x=Sample_ID)) +
+  geom_bar(position="fill", stat="identity") +
+    theme(axis.title.x = element_blank(), 
+      axis.title.y = element_text(size=7, margin = margin(t = 0, r = 14, b = 0, l = 0)),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.text.x = element_text(size = 5, color = "black", angle=60, hjust=1,  margin = margin(t = 5, r = 0, b = 0, l = 0)),
+      axis.text.y = element_text(size = 7, color = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)),
+      legend.text = element_text(size=7),
+      legend.title = element_text(size=7),
+      axis.ticks.length = unit(-0.1, "cm"),
+      axis.ticks = element_line(size = 0.2)) +
+    ylab("Percent of Total Microcystis")
+Microcystis_node_plot_M851_preclustered + labs(fill = "Microcystis Node")
+ggsave("Microcystis_node_plot_M851_preclustered.pdf", plot = Microcystis_node_plot_M851_preclustered, width = 110, height = 80, units = "mm", dpi=320)
+```
+Yes, this confirms that the difference in oligotyping is due to whether or not the sequences were preclustered.  
+
+Below are phoots of each colony identified as an ~equal mixture of Microcystis oligotypes:  
+
+**MC2019-0011:**  
+![Colony 11](/Users/smitdere/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0011.BMP){#id .class width=50% height=50%}![Colony 11](/Users/smitdere/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0011f.BMP){#id .class width=50% height=50%}  
+
+**MC2019-0012:**  
+![Colony 12](/Users/smitdere/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0012.BMP){#id .class width=50% height=50%}![Colony 12](/Users/smitdere/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0012f.BMP){#id .class width=50% height=50%}  
+
+**MC2019-0014:**  
+![Colony 14](/Users/smitdere/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0014.BMP){#id .class width=50% height=50%}![Colony 14](/Users/smitdere/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0014f.BMP){#id .class width=50% height=50%}  
+
+**MC2019-0020:**  
+![Colony 20](/Users/smitdere/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0020.BMP){#id .class width=50% height=50%}![Colony 20](/Users/smitdere/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0020f.BMP){#id .class width=50% height=50%} 
+
+**MC2019-0034:**  
+![Colony 34](/Users/smitdere/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019-0034.BMP){#id .class width=50% height=50%}![Colony 34](/Users/smitdere/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0034f.BMP){#id .class width=50% height=50%} 
+
+**MC2019-0093:**  
+![Colony 93](/Users/smitdere/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0093.BMP){#id .class width=50% height=50%}![Colony 93](/Users/smitdere/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0093f.BMP){#id .class width=50% height=50%} 
+
+
+Screening for Contaminants
+---
+We want to remove any contaminating nodes that were introduced from the lab during the colony sorting process, or from DNA extraction kits. We will do this by looking for the presence of the MED nodes in Lake Erie field data and in extraction blanks. Any contaminants should be absent from field data and present in one of the control blanks.  
+
+First, lets load the field dataset from 2017-2019.  
+```{r}
+#Import the dataframes:
+LE_H2O2.shared <- read.table("LE-H2O2-MATRIX-COUNT-M854-noR.txt", header = TRUE, sep="\t")
+LE_H2O2.metadata <- read.table("LE_H2O2.metadata_MED.txt", header= TRUE, sep="\t")
+
+#Fix up OTU table and merge with taxonomy table:
+rownames(LE_H2O2.shared) <- LE_H2O2.shared$samples
+drop <- "samples"
+LE_H2O2.shared <- LE_H2O2.shared[ , !(names(LE_H2O2.shared) %in% drop)]
+LE_H2O2.shared <- t(LE_H2O2.shared) #transpose table so that nodes are row names for merging
+#Merge with taxonomy
+LE_H2O2.merged <- merge(LE_H2O2.shared, MC_2019.taxonomy_M854_no_R, by.x="row.names", by.y="Node", all = FALSE)
+#Divide the taxonomy into separate columns for each rank for sorting
+LE_H2O2.merged <- separate(LE_H2O2.merged, Taxonomy, c("Domain", "Phylum", "Class", "Order", "Family", "Genus"), sep=";", remove=TRUE)
+
+#Remove samples that were controls and had a low number of reads:
+drop <- LE_H2O2.metadata$Sortchem[ LE_H2O2.metadata$Enough_reads == "No" ]
+LE_H2O2.merged <- LE_H2O2.merged[ , !(names(LE_H2O2.merged) %in% drop)]
+
+#Remove samples that were cross-contaminted during plate loading:
+drop <- c("E2019_1152_1", "E2019_1177_1")
+LE_H2O2.merged <- LE_H2O2.merged[ , !(names(LE_H2O2.merged) %in% drop)]
+
+#Sum the T. thermophilus reads in each sample, then remove those OTUs from the data:
+LE_H2O2.merged.std_reads <- as.data.frame(colSums(LE_H2O2.merged[2:214][LE_H2O2.merged$Genus == "Thermus",]))
+colnames(LE_H2O2.merged.std_reads) <- c("Total_Thermus_reads")
+LE_H2O2.merged.std_reads$Sortchem <- row.names(LE_H2O2.merged.std_reads)
+LE_H2O2.merged <- LE_H2O2.merged[LE_H2O2.merged$Genus != "Thermus", ]
+
+#Convert dataframe to long format:
+LE_H2O2.merged.long <- gather(LE_H2O2.merged, Sortchem, Counts, 2:214)
+
+#Add the tallied Thermus reads to the dataframe:
+LE_H2O2.merged.long <- merge(LE_H2O2.merged.long, LE_H2O2.merged.std_reads, by="Sortchem", all = TRUE)
+
+#Add metadata:
+LE_H2O2.merged.long <- merge(LE_H2O2.merged.long, LE_H2O2.metadata, by="Sortchem", all = FALSE)
+
+#Calculate absolute abundance:
+LE_H2O2.merged.long$Reads_mL <- (LE_H2O2.merged.long$Counts * LE_H2O2.merged.long$Spiked_copy_number) / (LE_H2O2.merged.long$Total_Thermus_reads * LE_H2O2.merged.long$mLs_filtered)
+```
+
+Plot the absolute abundance of the Microcystis nodes in the whole water samples in 2019: 
+```{r}
+#Get a dataframe of just the abundance of the Microcystis nodes in whole water:
+Microcystis_WW_node_df <- filter(LE_H2O2.merged.long,
+                                   Genus == "Microcystis_PCC-7914" & Other_Treatment == "Whole water")
+
+#Calculate the mean abundance in each sample:
+Microcystis_WW_node_abs_abund_sum <- Microcystis_WW_node_df %>%
+  group_by(Row.names, Exp_Date, Site) %>%
+  summarise(n=n(), mean=mean(Reads_mL), sd=sd(Reads_mL)) %>%
+  mutate(se=sd/sqrt(n)) %>%
+  mutate(ci=se*1.96)
+
+#Convert the date column to date format:
+Microcystis_WW_node_abs_abund_sum$Exp_Date <- dmy(Microcystis_WW_node_abs_abund_sum$Exp_Date)
+
+#Create a year column for plot faceting:
+Microcystis_WW_node_abs_abund_sum$Year <- year(Microcystis_WW_node_abs_abund_sum$Exp_Date)
+
+#Create a day of year column to plot by, so that data from multiple years are overlaid in the plot:
+Microcystis_WW_node_abs_abund_sum$DayofYear <- yday(Microcystis_WW_node_abs_abund_sum$Exp_Date)
+
+
+#Plot the absolute abundance of each Microcystis node:
+Microcystis_WW_node_abs_abund_plot <- filter(Microcystis_WW_node_abs_abund_sum, Year == "2019") %>%
+  ggplot(aes(x=Exp_Date, y=mean)) + 
+    geom_line() +
+    geom_point(aes(shape=Site)) + 
+    geom_errorbar(aes(ymin=mean-ci, ymax=mean+ci), width = 1) +
+    facet_grid(~Row.names, scales="free_y") +
+    scale_color_manual(values=c("coral", "dodgerblue", "chartreuse", "cadetblue4", "burlywood", "cyan3",
+                                "gold", "darkorchid", "deeppink", "plum1", "slategray4", "navy", "red"),
+                       name = "Station") +
+    theme_classic() +
+    theme(
+      strip.text = element_text(size = 12),
+      strip.background = element_rect(size = 0.25),
+      panel.border=element_rect(colour="black",size=0.1,fill="NA"),
+      axis.line = element_line(size=0.1),
+      axis.title.x = element_blank(), 
+      axis.title.y = element_text(size=12, margin = margin(t = 0, r = 10, b = 0, l = 0)),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.text.x = element_text(size = 10, color = "black", angle = 45, margin = margin(t = 0, r = 10, b = 0, l = 0)),
+      axis.text.y = element_text(size = 10, color = "black", margin = margin(t = 0, r = 10, b = 0, l = 0)),
+      axis.ticks.length= unit(-0.2, "cm"),
+      axis.ticks = element_line(size=0.1),
+      legend.position = "top",
+      legend.title = element_text(size=12, margin = margin(t = 0, r = 10, b = 0, l = 0)),
+      legend.text = element_text(size=12)) +
+  scale_x_date(date_breaks = "2 weeks", date_labels = "%d %b %Y") +
+  xlab("") +
+  ylab(expression("Node Abundance (reads/mL)"))
+
+Microcystis_WW_node_abs_abund_plot
+ggsave("Microcystis_WW_node_abs_abund_plot.pdf", plot = Microcystis_WW_node_abs_abund_plot, width = 8.5, height = 6, units = "in", dpi=320)
+```
+Plot the absolute abundance of the Microcystis nodes in the whole water samples in each year: 
+```{r}
+Microcystis_WW_node_all_years_plot <- ggplot(Microcystis_WW_node_abs_abund_sum, aes(x=DayofYear, y=mean,
+                                                                                    color=Row.names)) + 
+    geom_line() +
+    geom_point() + 
+    geom_errorbar(aes(ymin=mean-ci, ymax=mean+ci), width = 1) +
+    facet_grid(~Year, scales="free_y") +
+    scale_color_manual(values=c("coral", "dodgerblue", "chartreuse", "cadetblue4", "burlywood", "cyan3",
+                                "gold", "darkorchid", "deeppink", "plum1", "slategray4", "navy", "red"),
+                       name = "Station") +
+    theme_classic() +
+    theme(
+      strip.text = element_text(size = 12),
+      strip.background = element_rect(size = 0.25),
+      panel.border=element_rect(colour="black",size=0.1,fill="NA"),
+      axis.line = element_line(size=0.1),
+      axis.title.x = element_blank(), 
+      axis.title.y = element_text(size=12, margin = margin(t = 0, r = 10, b = 0, l = 0)),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.text.x = element_text(size = 10, color = "black", angle = 45, margin = margin(t = 0, r = 10, b = 0, l = 0)),
+      axis.text.y = element_text(size = 10, color = "black", margin = margin(t = 0, r = 10, b = 0, l = 0)),
+      axis.ticks.length= unit(-0.2, "cm"),
+      axis.ticks = element_line(size=0.1),
+      legend.position = "top",
+      legend.title = element_text(size=12, margin = margin(t = 0, r = 10, b = 0, l = 0)),
+      legend.text = element_text(size=12)) +
+  xlab("") +
+  ylab(expression("Node Abundance (reads/mL)"))
+
+Microcystis_WW_node_all_years_plot
+```
+
+
+Then build a bar plot for each node in the colony dataset:
+```{r}
+#Create a vector of nodes to loop through:
+nodes <- MC_2019.merged_M854_no_R$Row.names
+
+#Get samples from size fractionation experiments:
+LE_H2O2.merged.size_frac <- filter(LE_H2O2.merged.long, Experiment_Type == "Size_Frac")
+
+#Calculate mean, sd, se, and 95% CI:
+LE_H2O2.merged.size_frac_sum <- LE_H2O2.merged.size_frac %>%
+  group_by(Row.names, Exp_Date, Other_Treatment) %>%
+  summarise(n=n(), mean=mean(Reads_mL), sd=sd(Reads_mL)) %>%
+  mutate(se=sd/sqrt(n)) %>%
+  mutate(ci=se*1.96)
+
+#Make a bar plot of the absolute abundance of each node in whole and 100um filtered water in 2018 and 2019:
+for (i in nodes) {
+d <- filter(LE_H2O2.merged.size_frac_sum, Row.names == i)
+  print(ggplot(d, aes(fill=Other_Treatment, y=mean, x=Exp_Date)) +
+    geom_bar(position=position_dodge(), stat="identity") +
+    geom_errorbar(aes(ymin=mean-ci, ymax=mean+ci), width=0.2, position=position_dodge(0.9), color="black") +
+    ggtitle(as.character(i)) +
+    theme(plot.title = element_text(size=12),
+      axis.title.x = element_blank(), 
+      axis.title.y = element_text(size=12, margin = margin(t = 0, r = 14, b = 0, l = 0)),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.text.x = element_text(size = 9, color = "black", angle=60, hjust=1,  margin = margin(t = 5, r = 0, b = 0, l = 0)),
+      axis.text.y = element_text(size = 9, color = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)),
+      axis.ticks.length = unit(-0.1, "cm"),
+      axis.ticks = element_line(size = 0.2),
+      legend.title = element_blank()) +
+    ylab("Abundance (reads/mL)"))
+  flush.console()
+}
+```
+
+Flag any nodes that were absent from any field sample or present at low relative abundance without a significant difference in whole water and 100 um filtered water:  
+
+Are the taxonomic assignments of these nodes in pervious papers that have characterized kit-ome contaminants? Format for list below is: Node #; taxonomoy; contamination flag; NCBI blast hits (Megablast algorithm); whether a matching taxonomy is identified in kit-ome literature
+
+1210; Unclassified Enterobacteriaceae; Not in field samples at appreciable abundance; Enterobacter/Klebsiella; Yes (Saltar et al. 2014 and Shiek et al. 2018)
+
+1722; Aeromonas; Not in field samples at appreciable abundance or differentially abundand in whole vs filtered water; Aeromonas; No
+
+3021; Uncultured Rhizobiales; Not in field samples at appreciable abundance or differentially abundand in whole vs filtered water; Uncultured bacteria/Uncultured Hyphomicrobium/Uncultured Rhizobiales; No
+
+3117; Rickettsiales SMD12; Not in field samples at appreciable abundance; Uncultured bacterium ; No
+
+3319; Unclassified Comamonadaceae; Not in field samples at appreciable abundance or differentially abundand in whole vs filtered water; Ramlibacter/Hydrogenophaga/Variovorax; Yes (Saltar et al. 2014 and Shiek et al. 2018)
+
+3462; Uncultured Microtrichales; Not different in whole vs filtered water, usually present at low abundance; Uncultured Actinobacteria; No
+
+3964; Uncultured Bacteria; Usually absent; Uncultured Eukaryote; Could be a plastid read? Remove.
+
+4409; Sphingomonas; Not in field samples; Sphingomonas; Yes (Saltar et al. 2014 and Shiek et al. 2018)
+
+4516; Peredibacter; Not different in whole vs filtered water, usually present at low abundance; Peredibacter; No
+
+4522; Peredibacter; Not different in whole vs filtered water, usually present at low abundance; Uncultured bacteria; No
+
+4719; Uncultured Rhodospirillales; Not different in whole vs filtered water, usually present at low abundance; Uncultured bacteria; No
+
+4851; Lysinibacillus; Not present in field samples; Bacillus horikoshi; Yes (Saltar et al. 2014 and Shiek et al. 2018)
+
+5470; Thermus; Not different in whole vs filtered water, usually present at low abundance; Synthetic construct genes/Thermus; Likely contamination from aerosolization of the standard.
+
+6200; Uncultured Silvanigrellaceae; Not in field samples at appreciable abundance; Uncultured bacteria; No
+
+6440; Uncultured Rhizobiales; Not in field samples at appreciable abundance or differentially abundand in whole vs filtered water; Uncultured bacteria/Uncultured Hyphomicrobium/Uncultured Rhizobiales; No
+
+7313; Uncultured Pirellulaceae; Not different in whole vs filtered water, usually present at low abundance; Uncultured Planctomycete; No
+
+7726; Bdellovibrio; Not different in whole vs filtered water, usually present at low abundance; Uncultured Bdellovibrio; No
+
+8368; Sphingobacteriales OPS 17; Not in field samples at appreciable abundance or differentially abundand in whole vs filtered water; Uncultured Bacteroidetes; No
+
+8722; Uncultured Sutterellaceae; Not different in whole vs filtered water, usually present at low abundance; Uncultured Alcaligenaceae; No 
+
+8876; Unclassified Sporichthyaceae; Not different in whole vs filtered water, usually present at low abundance; Candidatus Planktophila; No
+
+8970; Uncultured Microscillaceae; Not different in whole vs filtered water, usually present at low abundance; Uncultured Flammeovirgaceae; No
+
+9860; Unclassified Comamonadaceae; Not in field samples at appreciable abundance or differentially abundand in whole vs filtered water; Uncultured bacterium; No
+
+10058; Uncultured Microscillaceae; Not in field samples at appreciable abundance or differentially abundand in whole vs filtered water; Uncultured Flammeovirgaceae; No
+
+10738; Candidatus Planktoluna; Not in field samples; Uncultured Actinobacteria; No
+
+10820; Unclassified Comamonadaceae; Not different in whole vs filtered water, usually present at low abundance; Uncultured Bacteria; No
+
+Check the abundance of these nodes in the control samples:
+```{r}
+#Convert the control dataframe to long format:
+MC_2019.merged_M854_no_R.controls.long <- gather(MC_2019.merged_M854_no_R.controls, Sample_ID, Count, 2:7)
+
+filter(MC_2019.merged_M854_no_R.controls.long, Row.names == "X000001210" | Row.names == "X000001722" | Row.names ==  "X000003021" | Row.names ==  "X000003117" | Row.names ==  "X000003319" | Row.names ==  "X000003462" | Row.names ==  "X000003964" | Row.names ==  "X000004409" | Row.names ==  "X000004516" | Row.names ==  "X000004522" | Row.names ==  "X000004719" | Row.names ==  "X000004851" | Row.names ==  "X000005470" | Row.names ==  "X000006200" | Row.names ==  "X000006440" | Row.names ==  "X000007313" | Row.names ==  "X000007726" | Row.names ==  "X000008368" | Row.names ==  "X000008722" | Row.names ==  "X000008876" | Row.names ==  "X000008970" | Row.names ==  "X000009860" | Row.names ==  "X000010058" | Row.names ==  "X000010738" | Row.names ==  "X000010820") %>% 
+    ggplot(aes(x=reorder(Row.names, desc(Row.names)), y=Count)) +
+      geom_jitter(size=0.3, alpha=0.7) +
+      stat_summary(fun.y=mean, geom="point", color="red", size=0.5) +
+      stat_summary(fun.data=mean_cl_normal, geom="errorbar", color="red", size=0.2, fun.args = list(mult = 1, conf.int = 0.95)) +
+      theme(plot.title = element_text(size=12),
+            axis.title.x = element_blank(), 
+            axis.title.y = element_text(size=12, margin = margin(t = 0, r = 14, b = 0, l = 0)),
+            panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank(),
+            axis.text.x = element_text(size = 9, color = "black", angle=60, hjust=1,  margin = margin(t = 5, r = 0, b = 0, l = 0)),
+            axis.text.y = element_text(size = 9, color = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)),
+            axis.ticks.length = unit(-0.1, "cm"),
+            axis.ticks = element_line(size = 0.2)) +
+      ylab("Read Count")
+```
+Plot again, but zoom in to see the other node data better:  
+```{r}
+filter(MC_2019.merged_M854_no_R.controls.long, Row.names == "X000001210" | Row.names == "X000001722" | Row.names ==  "X000003021" | Row.names ==  "X000003117" | Row.names ==  "X000003319" | Row.names ==  "X000003462" | Row.names ==  "X000003964" | Row.names ==  "X000004409" | Row.names ==  "X000004516" | Row.names ==  "X000004522" | Row.names ==  "X000004719" | Row.names ==  "X000004851" | Row.names ==  "X000005470" | Row.names ==  "X000006200" | Row.names ==  "X000006440" | Row.names ==  "X000007313" | Row.names ==  "X000007726" | Row.names ==  "X000008368" | Row.names ==  "X000008722" | Row.names ==  "X000008876" | Row.names ==  "X000008970" | Row.names ==  "X000009860" | Row.names ==  "X000010058" | Row.names ==  "X000010738" | Row.names ==  "X000010820") %>% 
+    ggplot(aes(x=reorder(Row.names, desc(Row.names)), y=Count)) +
+      geom_jitter(size=0.3, alpha=0.7) +
+      stat_summary(fun.y=mean, geom="point", color="red", size=0.5) +
+      stat_summary(fun.data=mean_cl_normal, geom="errorbar", color="red", size=0.2, fun.args = list(mult = 1, conf.int = 0.95)) +
+      theme(plot.title = element_text(size=12),
+            axis.title.x = element_blank(), 
+            axis.title.y = element_text(size=12, margin = margin(t = 0, r = 14, b = 0, l = 0)),
+            panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank(),
+            axis.text.x = element_text(size = 9, color = "black", angle=60, hjust=1,  margin = margin(t = 5, r = 0, b = 0, l = 0)),
+            axis.text.y = element_text(size = 9, color = "black", margin = margin(t = 0, r = 5, b = 0, l = 0)),
+            axis.ticks.length = unit(-0.1, "cm"),
+            axis.ticks = element_line(size = 0.2)) +
+      coord_cartesian(ylim=c(0,5)) +
+      ylab("Read Count")
+```
+
+Re-process the dataframe after removing the contaminants:  
+```{r}
+contaminants <- c("X000001210", "X000003319", "X000003964", "X000004409", "X000004851", "X000005470")
+
+#Load dataframes:
+MC_2019.shared_M854_no_R <- read.table("MC2019-MATRIX-PERCENT-M854-noR.txt", header = TRUE, sep="\t")
+MC_2019.taxonomy_M854_no_R <- read.table("NODE-REPRESENTATIVES-M854-noR.nr_v138.wang.taxonomy", header = TRUE, sep="\t")
+
+#Fix up OTU table and merge with taxonomy table:
+rownames(MC_2019.shared_M854_no_R) <- MC_2019.shared_M854_no_R$samples
+drop <- "samples"
+MC_2019.shared_M854_no_R <- MC_2019.shared_M854_no_R[ , !(names(MC_2019.shared_M854_no_R) %in% drop)]
+MC_2019.shared_M854_no_R <- t(MC_2019.shared_M854_no_R) #transpose table so that nodes are row names for merging
+rownames(MC_2019.taxonomy_M854_no_R) <- MC_2019.taxonomy_M854_no_R$Node
+
+MC_2019.merged_M854_no_R <- merge(MC_2019.shared_M854_no_R, MC_2019.taxonomy_M854_no_R, by.x="row.names", by.y="Node", all = FALSE)
+#Divide the taxonomy into separate columns for each rank for sorting
+MC_2019.merged_M854_no_R <- separate(MC_2019.merged_M854_no_R, Taxonomy, c("Domain", "Phylum", "Class", "Order", "Family", "Genus"), sep=";", remove=TRUE)
+
+#Filter dataframe so that we save the control samples into a separate dataframe for later
+keep <- MC_2019.metadata$Sample_ID[ MC_2019.metadata$Colony_Number == "PBS Blank" ] 
+taxcols <- c("Row.names", "Domain", "Phylum", "Class", "Order", "Family", "Genus")
+MC_2019.merged_M854_no_R.controls <- MC_2019.merged_M854_no_R[ , names(MC_2019.merged_M854_no_R) %in% keep | names(MC_2019.merged_M854_no_R) %in% taxcols]
+
+#Remove samples that were controls and had a low number of reads:
+drop <- MC_2019.metadata$Sample_ID[ MC_2019.metadata$Enough_reads == "No" ]
+MC_2019.merged_M854_no_R <- MC_2019.merged_M854_no_R[ , !(names(MC_2019.merged_M854_no_R) %in% drop)]
+
+#Remove the Mock Sample:
+MC_2019.merged_M854_no_R <- MC_2019.merged_M854_no_R[ , names(MC_2019.merged_M854_no_R) != "MC2019_Mock"]
+
+#Calculate the observation frequency of each node, add to dataframe:
+otu_nonzero_counts <- apply(MC_2019.merged_M854_no_R[2:45], 1, function(y) sum(length(which(y > 0))))
+otu_obs_freq <- ( otu_nonzero_counts / 44 ) * 100
+MC_2019.merged_M854_no_R$otu_obs_freq <- otu_obs_freq
+
+#Remove any OTUs not present in the colony samples:
+MC_2019.merged_M854_no_R <- MC_2019.merged_M854_no_R[ MC_2019.merged_M854_no_R$otu_obs_freq !=0, ]
+
+#Remove the OTUs flagged as contaminants:
+MC_2019.merged_M854_no_R <- MC_2019.merged_M854_no_R[ !(MC_2019.merged_M854_no_R$Row.names %in% contaminants), ]
+
+#Convert dataframe to long format:
+MC_2019.merged_M854_no_R.long <- gather(MC_2019.merged_M854_no_R, Sample_ID, Perc_abund, 2:45)
+
+#Add colony metadata:
+MC_2019.merged_M854_no_R.long <- merge(MC_2019.merged_M854_no_R.long, MC_2019.metadata, by="Sample_ID", all.x = TRUE)
+drop <- c("Colony_Number", "Amplification", "Enough_reads") #remove these columns, because they are no longer useful
+MC_2019.merged_M854_no_R.long <- MC_2019.merged_M854_no_R.long[, !(names(MC_2019.merged_M854_no_R.long) %in% drop) ]
+```
+
+
+Analysis of Cleaned Dataset
+---
+To compare the colony phycosphere communities, construct an NMDS plot to cluster samples, overlay colony morphology and collection date:  
+```{r}
+#Take our processed OTU table and remove the metadata columns:
+#Columns 1-47 contain the info we need, the rest is metadata
+MC_2019.matrix <- MC_2019.merged_M854_no_R[MC_2019.merged_M854_no_R$Genus != "Microcystis_PCC-7914",1:45] #Remove the Microcystis nodes
+rownames(MC_2019.matrix) <- MC_2019.matrix$Row.names
+MC_2019.matrix <- MC_2019.matrix[ , colnames(MC_2019.matrix) != "Row.names" ]
+#Transpose the matrix so that samples are rows and OTUs are columns:
+MC_2019.matrix <- t(MC_2019.matrix)
+
+#Build the plot using the metaNMDS function in vegan with three axes:
+set.seed(123)
+NMDS_3 <- metaMDS(MC_2019.matrix, distance = "bray", k=3, autotransform = FALSE, try = 40, trymax = 1000)
+```
+The stress of the best solution is 0.12. The stress of the NMDS plot indicates the goodness of fit. A stress value 0.1 or lower is considered a fair fit, and a stress value below 0.05 is considered a good fit. Anything above 0.2 is considered very poor and above 0.3 is suspect for arbitrary clustering. The stress of the NMDS is sensitive to the number of axes, (set as k in the vegan function).  
+
+Lets make sure that the ordination distance actually represents the calculated Bray-Curtis dissimilarities by plotting ordination distance vs dissimilarity:  
+```{r}
+stressplot(NMDS_3, xlim=c(0,1))
+```
+The ordination distance increases with phycosphere community dissimilarity as expected.  
+
+Plot the NMDS overlaying sampling date and colony morphology:  
+```{r}
+#Extract the axis coordinates (the NMDS scores):
+NMDS_3.scores <- as.data.frame(scores(NMDS_3))
+
+#Add metadata:
+NMDS_3.scores <- merge(NMDS_3.scores, MC_2019.metadata, by.x = "row.names", by.y = "Sample_ID", all.x = TRUE)
+rownames(NMDS_3.scores) <- NMDS_3.scores$Row.names
+drop <- "Row.names"
+NMDS_3.scores <- NMDS_3.scores[ , !(names(NMDS_3.scores) %in% drop) ]
+
+NMDS_morpho_date <- plot_ly(NMDS_3.scores, x = ~NMDS1, y = ~NMDS2, z = ~NMDS3, color = ~Date_Collected, colors = c("coral", "gold", "blue", "aquamarine", "deeppink2", "green3"), symbol = ~Morphotype, symbols = c("circle", "diamond", "square"), showlegend = F) %>%
+  add_markers(marker = list(line = list(color = "black", width = 0.5),
+                            size = 6)) %>%
+  layout(scene = list(xaxis = list(title = "NMDS1"),
+                      yaxis = list(title = "NMDS2"),
+                      zaxis = list(title = "NMDS3")),
+          legend = list(title = "Morphotype"),
+         annotations = list(text = "Stress = 0.12",
+                            showarrow = F,
+                            align="left",
+                            x=0.8,
+                            y=0.9,
+                            z=2.5))
+
+NMDS_morpho_date
+```
+
+The plot is interactive. You can click and drag to view the data from different views of the 3 axes.  
+Legend:  
+Date  
+blue = 22-Jul-19  
+magenta = 5-Aug-19  
+gold = 19-Aug-19  
+aqua = 3-Sep-19  
+green = 9-Sep-19  
+coral = 16-Sep-19  
+
+Morphotype  
+circle = aeruginosa  
+diamond = novacekii  
+square = wesenbergii  
+
+It appears that the communities are clustering based on both early vs late dates and wesenbergii vs non-wesenbergii.  
+
+Is the separation of samples in th NMDS based on morphotype and date statistically significant?
+We can test this with an analysis of similarity (ANOSIM). It determines if the ranked dissimilarities between groups is significantly different.  
+```{r}
+#ANOSIM for collection date:
+ano_date <- anosim(MC_2019.matrix, NMDS_3.scores$Date_Collected, distance = "bray", permutations = 9999)
+#ANOSIM for colony morphology:
+ano_morph <- anosim(MC_2019.matrix, NMDS_3.scores$Morphotype, distance = "bray", permutations = 9999)
+ano_date
+ano_morph
+```
+There is a significant difference in mean colony dissimilarity by both date and morphology, but the effect based on morphology is very weak.  
+
+Lets look at Microcystis oligotype (node) instead of morphology on the NMDS ordination:  
+```{r}
+NMDS_3D_date_oligo <- plot_ly(NMDS_3.scores, x = ~NMDS1, y = ~NMDS2, z = ~NMDS3, color = ~Date_Collected, colors = c("coral", "gold", "blue", "aquamarine", "deeppink2", "green3"), symbol = ~MC_node, symbols = c("circle", "diamond", "square", "cross"), showlegend = T) %>%
+  add_markers(marker = list(line = list(color = "black", width = 0.5),
+                            size = 6)) %>%
+  layout(scene = list(xaxis = list(title = "NMDS1"),
+                      yaxis = list(title = "NMDS2"),
+                      zaxis = list(title = "NMDS3")),
+         annotations = list(text = "Stress = 0.12",
+                            showarrow = F,
+                            align="left",
+                            x=0.8,
+                            y=0.9,
+                            z=2.5))
+NMDS_3D_date_oligo
+```
+
+Legend:  
+Date  
+blue = 22-Jul-19  
+magenta = 5-Aug-19  
+gold = 19-Aug-19  
+aqua = 3-Sep-19  
+green = 9-Sep-19  
+coral = 16-Sep-19  
+
+Microcystis oligotype  
+circle = Oligotype 1  
+diamond = Oligotype 2  
+square = Oligotype 3
+cross = Oligotype 4
+
+Are there significant differences based on Microcystis oligotype?  
+```{r}
+#ANOSIM for oligotype:
+ano_oligo <- anosim(MC_2019.matrix, NMDS_3.scores$MC_node, distance = "bray", permutations = 9999)
+ano_oligo
+```
+There are significant differences based on Microcystis oligotype of the colonies, but the effect based on date is stronger.  
+
+Let’s see if the samples cluster into predictable groups based on date and oligotype using hierarchical clustering:  
+```{r}
+#Make a distance matrix:
+MC_2019_all.dist <- vegdist(MC_2019.matrix, method="bray")
+#Cluster using hierarchical clustering
+MC_2019_all.clust <- hclust(MC_2019_all.dist, method = "average")
+
+#Convert clustering results to a dendogram format:
+MC_2019_all.dendro <- as.dendrogram(MC_2019_all.clust)
+MC_2019_all.dendro <- color_branches(MC_2019_all.dendro, k=5, col = c("red", "purple", "blue", "goldenrod", "lightseagreen"), groupLabels = TRUE)
+MC_2019_all.dendro <- set(MC_2019_all.dendro, "labels_cex", 0.5)
+#Plot
+Colony_dendrog_plot <- plot(MC_2019_all.dendro, ylab = "Bray-Curtis Dissimilarity")
+```
+What does the data look like when we remove the colonies with multiple Microcystis nodes:  
+```{r}
+#Take our processed OTU table and remove the metadata columns:
+#Columns 1-47 contain the info we need, the rest is metadata
+#Remove the Microcystis nodes
+MC_2019.matrix_no_mixed <- MC_2019.merged_M854_no_R[MC_2019.merged_M854_no_R$Genus != "Microcystis_PCC-7914",1:45]
+#Remove samples flagged as mixed Microcystis nodes:
+keep <- unique(MC_2019.merged_M854_no_R.long$Sample_ID[MC_2019.merged_M854_no_R.long$MC_node != "mixed"])
+MC_2019.matrix_no_mixed <- MC_2019.matrix_no_mixed[ , colnames(MC_2019.matrix_no_mixed) %in% keep ]
+#Fix up row names and remove the column with nodes.
+rownames(MC_2019.matrix_no_mixed) <- MC_2019.matrix_no_mixed$Row.names
+MC_2019.matrix_no_mixed <- MC_2019.matrix_no_mixed[ , colnames(MC_2019.matrix_no_mixed) != "Row.names" ]
+#Transpose the matrix so that samples are rows and OTUs are columns:
+MC_2019.matrix_no_mixed <- t(MC_2019.matrix_no_mixed)
+
+#Build the plot using the metaNMDS function in vegan with three axes:
+set.seed(123)
+NMDS_3_no_mixed <- metaMDS(MC_2019.matrix_no_mixed, distance = "bray", k=3, autotransform = FALSE, try = 40, trymax = 1000)
+```
+Check the ordination distances:  
+```{r}
+stressplot(NMDS_3_no_mixed, xlim=c(0,1))
+```
+Make the NMDS plot:  
+```{r}
+#Extract the axis coordinates (the NMDS scores):
+NMDS_3_no_mixed.scores <- as.data.frame(scores(NMDS_3_no_mixed))
+
+#Add metadata:
+NMDS_3_no_mixed.scores <- merge(NMDS_3_no_mixed.scores, MC_2019.metadata, by.x = "row.names", by.y = "Sample_ID", all.x = TRUE)
+rownames(NMDS_3_no_mixed.scores) <- NMDS_3_no_mixed.scores$Row.names
+drop <- "Row.names"
+NMDS_3_no_mixed.scores <- NMDS_3_no_mixed.scores[ , !((NMDS_3_no_mixed.scores) %in% drop)]
+
+NMDS_3D_no_mixed_date_oligo <- plot_ly(NMDS_3_no_mixed.scores, x = ~NMDS1, y = ~NMDS2, z = ~NMDS3, color = ~Date_Collected, colors = c("coral", "gold", "blue", "aquamarine", "deeppink2", "green3"), symbol = ~MC_node, symbols = c("circle", "diamond", "square"), showlegend = T) %>%
+  add_markers(marker = list(line = list(color = "black", width = 0.5),
+                            size = 6)) %>%
+  layout(scene = list(xaxis = list(title = "NMDS1"),
+                      yaxis = list(title = "NMDS2"),
+                      zaxis = list(title = "NMDS3")),
+         annotations = list(text = "Stress = 0.11",
+                            showarrow = F,
+                            align="left",
+                            x=0.8,
+                            y=0.9,
+                            z=2.5))
+NMDS_3D_no_mixed_date_oligo
+```
+Is there still a significant relationship between date and oligotype?  
+```{r}
+ano_oligo_no_mixed <- anosim(MC_2019.matrix_no_mixed, NMDS_3_no_mixed.scores$MC_node, distance = "bray", permutations = 9999)
+ano_date_no_mixed <- anosim(MC_2019.matrix_no_mixed, NMDS_3_no_mixed.scores$Date_Collected, distance = "bray", permutations = 9999)
+
+ano_oligo_no_mixed
+ano_date_no_mixed
+```
+```{r}
+#Make a distance matrix:
+MC_2019_all.dist.no_mixed <- vegdist(MC_2019.matrix_no_mixed, method="bray")
+#Cluster using hierarchical clustering
+MC_2019_all.clust.no_mixed <- hclust(MC_2019_all.dist.no_mixed, method = "average")
+#Get three groups from the hclust dendogram
+MC_2019_all.groups.no_mixed <- cutree(MC_2019_all.clust.no_mixed, k=3)
+
+#Convert clustering results to a dendogram format:
+MC_2019_all.dendro.no_mixed <- as.dendrogram(MC_2019_all.clust.no_mixed)
+MC_2019_all.dendro.no_mixed <- color_branches(MC_2019_all.dendro.no_mixed, k=3, col = c("red", "purple", "blue", "goldenrod"), groupLabels = TRUE)
+MC_2019_all.dendro.no_mixed <- set(MC_2019_all.dendro.no_mixed, "labels_cex", 0.5)
+#Plot
+Colony_dendrog_plot_no_mixed <- plot(MC_2019_all.dendro.no_mixed, ylab = "Bray-Curtis Dissimilarity")
+```
+
+
