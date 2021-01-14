@@ -1,29 +1,176 @@
 Sample_ID	Date_Collected	Month	Year	Station	Sample_Type	Experiment	Chl	Extraction_Date	Amplification	Enough_reads
-SRR4619368	27-Oct-14	October	2014	WE4	100um ret	Field	1.14	NA	NA	Yes
-SRR3385676	27-Oct-14	October	2014	WE4	Whole Water	Field	1.14	NA	NA	Yes
-SRR4619383	6-Oct-14	October	2014	WE4	100um ret	Field	1.18	NA	NA	Yes
-SRR3385666	6-Oct-14	October	2014	WE4	Whole Water	Field	1.18	NA	NA	Yes
-SRR4619366	20-Oct-14	October	2014	WE4	100um ret	Field	1.39	NA	NA	Yes
-SRR3385672	20-Oct-14	October	2014	WE4	Whole Water	Field	1.39	NA	NA	Yes
-SRR3385659	23-Sep-14	September	2014	WE4	Whole Water	Field	2.62	NA	NA	Yes
-SRR4619365	27-Oct-14	October	2014	WE2	100um ret	Field	3.26	NA	NA	Yes
-SRR3385674	27-Oct-14	October	2014	WE2	Whole Water	Field	3.26	NA	NA	Yes
+SRR4619340	16-Jun-14	June	2014	WE2	100um ret	Field	10.72	NA	NA	Yes
+SRR4619335	16-Jun-14	June	2014	WE4	100um ret	Field	12.26	NA	NA	Yes
+SRR3385638	16-Jun-14	June	2014	WE4	Whole Water	Field	12.26	NA	NA	Yes
+SRR4619339	16-Jun-14	June	2014	WE12	100um ret	Field	34.37	NA	NA	Yes
+SRR4619375	30-Jun-14	June	2014	WE12	100um ret	Field	7.88	NA	NA	Yes
+SRR3385662	30-Jun-14	June	2014	WE12	Whole Water	Field	7.88	NA	NA	Yes
+SRR4619343	30-Jun-14	June	2014	WE4	100um ret	Field	12.93	NA	NA	Yes
+SRR3385673	30-Jun-14	June	2014	WE4	Whole Water	Field	12.93	NA	NA	Yes
+SRR4619337	30-Jun-14	June	2014	WE2	100um ret	Field	19.94	NA	NA	Yes
+SRR3385649	30-Jun-14	June	2014	WE2	Whole Water	Field	19.94	NA	NA	Yes
 SRR4619346	8-Jul-14	July	2014	WE4	100um ret	Field	3.55	NA	NA	Yes
 SRR3385679	8-Jul-14	July	2014	WE4	Whole Water	Field	3.55	NA	NA	Yes
+SRR4619342	8-Jul-14	July	2014	WE2	100um ret	Field	6.85	NA	NA	Yes
+SRR3385677	8-Jul-14	July	2014	WE2	Whole Water	Field	6.85	NA	NA	Yes
+SRR4619341	8-Jul-14	July	2014	WE12	100um ret	Field	6.98	NA	NA	Yes
+SRR3385678	8-Jul-14	July	2014	WE12	Whole Water	Field	6.98	NA	NA	Yes
+SRR4619354	14-Jul-14	July	2014	WE4	100um ret	Field	3.96	NA	NA	Yes
+SRR4619355	14-Jul-14	July	2014	WE12	100um ret	Field	7.74	NA	NA	Yes
+SRR4619345	14-Jul-14	July	2014	WE2	100um ret	Field	10.43	NA	NA	Yes
+SRR3385680	14-Jul-14	July	2014	WE2	Whole Water	Field	10.43	NA	NA	Yes
+SRR4619351	21-Jul-14	July	2014	WE4	100um ret	Field	5.95	NA	NA	Yes
+SRR4619353	21-Jul-14	July	2014	WE2	100um ret	Field	16.26	NA	NA	Yes
+SRR4619352	21-Jul-14	July	2014	WE12	100um ret	Field	18.62	NA	NA	Yes
+SRR4619338	29-Jul-14	July	2014	WE4	100um ret	Field	6.12	NA	NA	Yes
+SRR3385635	29-Jul-14	July	2014	WE4	Whole Water	Field	6.12	NA	NA	Yes
+SRR4619350	29-Jul-14	July	2014	WE2	100um ret	Field	10.02	NA	NA	Yes
+SRR4619344	29-Jul-14	July	2014	WE12	100um ret	Field	33.15	NA	NA	Yes
+SRR3385634	29-Jul-14	July	2014	WE12	Whole Water	Field	33.15	NA	NA	Yes
+SRR4619372	4-Aug-14	August	2014	WE4	100um ret	Field	18.11	NA	NA	Yes
+SRR3385639	4-Aug-14	August	2014	WE4	Whole Water	Field	18.11	NA	NA	Yes
+SRR4619347	4-Aug-14	August	2014	WE2	100um ret	Field	29.44	NA	NA	Yes
+SRR3385636	4-Aug-14	August	2014	WE2	Whole Water	Field	29.44	NA	NA	Yes
+SRR4619334	4-Aug-14	August	2014	WE12	100um ret	Field	54.46	NA	NA	Yes
+SRR3385637	4-Aug-14	August	2014	WE12	Whole Water	Field	54.46	NA	NA	Yes
+SRR4619369	11-Aug-14	August	2014	WE12	100um ret	Field	11.58	NA	NA	Yes
+SRR4619371	11-Aug-14	August	2014	WE4	100um ret	Field	30.23	NA	NA	Yes
+SRR4619373	11-Aug-14	August	2014	WE2	100um ret	Field	71.96	NA	NA	Yes
+SRR4619374	18-Aug-14	August	2014	WE4	100um ret	Field	5.86	NA	NA	Yes
+SRR3385642	18-Aug-14	August	2014	WE4	Whole Water	Field	5.86	NA	NA	Yes
+SRR4619336	18-Aug-14	August	2014	WE12	100um ret	Field	33.35	NA	NA	Yes
+SRR3385641	18-Aug-14	August	2014	WE12	Whole Water	Field	33.35	NA	NA	Yes
+SRR4619370	18-Aug-14	August	2014	WE2	100um ret	Field	39.39	NA	NA	Yes
+SRR3385640	18-Aug-14	August	2014	WE2	Whole Water	Field	39.39	NA	NA	Yes
 SRR4619378	25-Aug-14	August	2014	WE4	100um ret	Field	3.56	NA	NA	Yes
 SRR3385645	25-Aug-14	August	2014	WE4	Whole Water	Field	3.56	NA	NA	Yes
+SRR4619376	25-Aug-14	August	2014	WE2	100um ret	Field	27.1	NA	NA	Yes
+SRR3385643	25-Aug-14	August	2014	WE2	Whole Water	Field	27.1	NA	NA	Yes
+SRR4619377	25-Aug-14	August	2014	WE12	100um ret	Field	38.28	NA	NA	Yes
+SRR3385644	25-Aug-14	August	2014	WE12	Whole Water	Field	38.28	NA	NA	Yes
+SRR4619356	2-Sep-14	September	2014	WE12	100um ret	Field	23.62	NA	NA	Yes
+SRR3385647	2-Sep-14	September	2014	WE12	Whole Water	Field	23.62	NA	NA	Yes
+SRR4619359	2-Sep-14	September	2014	WE4	100um ret	Field	28.42	NA	NA	Yes
+SRR3385648	2-Sep-14	September	2014	WE4	Whole Water	Field	28.42	NA	NA	Yes
+SRR4619357	2-Sep-14	September	2014	WE2	100um ret	Field	36.74	NA	NA	Yes
+SRR3385646	2-Sep-14	September	2014	WE2	Whole Water	Field	36.74	NA	NA	Yes
+SRR4619358	8-Sep-14	September	2014	WE2	100um ret	Field	20.77	NA	NA	Yes
+SRR3385650	8-Sep-14	September	2014	WE2	Whole Water	Field	20.77	NA	NA	Yes
+SRR4619361	8-Sep-14	September	2014	WE12	100um ret	Field	23.2	NA	NA	Yes
+SRR3385652	8-Sep-14	September	2014	WE12	Whole Water	Field	23.2	NA	NA	Yes
+SRR4619360	8-Sep-14	September	2014	WE4	100um ret	Field	26.24	NA	NA	Yes
+SRR3385653	8-Sep-14	September	2014	WE4	Whole Water	Field	26.24	NA	NA	Yes
 SRR4619349	15-Sep-14	September	2014	WE4	100um ret	Field	3.94	NA	NA	Yes
 SRR3385656	15-Sep-14	September	2014	WE4	Whole Water	Field	3.94	NA	NA	Yes
-SRR4619354	14-Jul-14	July	2014	WE4	100um ret	Field	3.96	NA	NA	Yes
+SRR4619363	15-Sep-14	September	2014	WE2	100um ret	Field	13.72	NA	NA	Yes
+SRR3385654	15-Sep-14	September	2014	WE2	Whole Water	Field	13.72	NA	NA	Yes
+SRR4619362	15-Sep-14	September	2014	WE12	100um ret	Field	18.49	NA	NA	Yes
+SRR3385655	15-Sep-14	September	2014	WE12	Whole Water	Field	18.49	NA	NA	Yes
+SRR3385659	23-Sep-14	September	2014	WE4	Whole Water	Field	2.62	NA	NA	Yes
+SRR4619348	23-Sep-14	September	2014	WE2	100um ret	Field	12.64	NA	NA	Yes
+SRR3385657	23-Sep-14	September	2014	WE2	Whole Water	Field	12.64	NA	NA	Yes
+SRR4619385	23-Sep-14	September	2014	WE12	100um ret	Field	16.97	NA	NA	Yes
+SRR3385658	23-Sep-14	September	2014	WE12	Whole Water	Field	16.97	NA	NA	Yes
+SRR4619388	29-Sep-14	September	2014	WE4	100um ret	Field	9.21	NA	NA	Yes
+SRR4619387	29-Sep-14	September	2014	WE12	100um ret	Field	22.25	NA	NA	Yes
+SRR3385663	29-Sep-14	September	2014	WE12	Whole Water	Field	22.25	NA	NA	Yes
+SRR4619386	29-Sep-14	September	2014	WE2	100um ret	Field	66.63	NA	NA	Yes
+SRR3385661	29-Sep-14	September	2014	WE2	Whole Water	Field	66.63	NA	NA	Yes
+SRR4619383	6-Oct-14	October	2014	WE4	100um ret	Field	1.18	NA	NA	Yes
+SRR3385666	6-Oct-14	October	2014	WE4	Whole Water	Field	1.18	NA	NA	Yes
 SRR4619382	6-Oct-14	October	2014	WE12	100um ret	Field	3.97	NA	NA	Yes
 SRR3385665	6-Oct-14	October	2014	WE12	Whole Water	Field	3.97	NA	NA	Yes
+SRR4619381	6-Oct-14	October	2014	WE2	100um ret	Field	8.06	NA	NA	Yes
+SRR3385664	6-Oct-14	October	2014	WE2	Whole Water	Field	8.06	NA	NA	Yes
 SRR3385668	15-Oct-14	October	2014	WE12	Whole Water	Field	4.11	NA	NA	Yes
 SRR4619379	15-Oct-14	October	2014	WE4	100um ret	Field	4.15	NA	NA	Yes
 SRR3385669	15-Oct-14	October	2014	WE4	Whole Water	Field	4.15	NA	NA	Yes
-SRR4619364	27-Oct-14	October	2014	WE12	100um ret	Field	4.91	NA	NA	Yes
-SRR3385675	27-Oct-14	October	2014	WE12	Whole Water	Field	4.91	NA	NA	Yes
+SRR4619384	15-Oct-14	October	2014	WE2	100um ret	Field	6.85	NA	NA	Yes
+SRR3385667	15-Oct-14	October	2014	WE2	Whole Water	Field	6.85	NA	NA	Yes
+SRR4619366	20-Oct-14	October	2014	WE4	100um ret	Field	1.39	NA	NA	Yes
+SRR3385672	20-Oct-14	October	2014	WE4	Whole Water	Field	1.39	NA	NA	Yes
 SRR4619367	20-Oct-14	October	2014	WE12	100um ret	Field	5	NA	NA	Yes
 SRR3385671	20-Oct-14	October	2014	WE12	Whole Water	Field	5	NA	NA	Yes
+SRR4619380	20-Oct-14	October	2014	WE2	100um ret	Field	7.23	NA	NA	Yes
+SRR3385670	20-Oct-14	October	2014	WE2	Whole Water	Field	7.23	NA	NA	Yes
+SRR4619368	27-Oct-14	October	2014	WE4	100um ret	Field	1.14	NA	NA	Yes
+SRR3385676	27-Oct-14	October	2014	WE4	Whole Water	Field	1.14	NA	NA	Yes
+SRR4619365	27-Oct-14	October	2014	WE2	100um ret	Field	3.26	NA	NA	Yes
+SRR3385674	27-Oct-14	October	2014	WE2	Whole Water	Field	3.26	NA	NA	Yes
+SRR4619364	27-Oct-14	October	2014	WE12	100um ret	Field	4.91	NA	NA	Yes
+SRR3385675	27-Oct-14	October	2014	WE12	Whole Water	Field	4.91	NA	NA	Yes
+BIE2017_0006	13-Jun-17	June	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
+BIE2017_0007	13-Jun-17	June	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
+BIE2017_0008	13-Jun-17	June	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
+BIE2017_0009	13-Jun-17	June	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
+BIE2017_0010	27-Jun-17	June	2017	WE2	Whole Water	Mesocosm	5.9	NA	NA	Yes
+BIE2017_0011	27-Jun-17	June	2017	WE2	Whole Water	Mesocosm	5.9	NA	NA	Yes
+BIE2017_0012	27-Jun-17	June	2017	WE2	Whole Water	Mesocosm	5.9	NA	NA	Yes
+BIE2017_0013	27-Jun-17	June	2017	WE2	Whole Water	Mesocosm	5.9	NA	NA	Yes
+BIE2017_0014	6-Jul-17	July	2017	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
+BIE2017_0015	6-Jul-17	July	2017	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
+BIE2017_0016	6-Jul-17	July	2017	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
+BIE2017_0017	6-Jul-17	July	2017	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
+BIE2017_0018	12-Jul-17	July	2017	WE2	Whole Water	Mesocosm	6	NA	NA	Yes
+BIE2017_0019	12-Jul-17	July	2017	WE2	Whole Water	Mesocosm	6	NA	NA	Yes
+BIE2017_0020	12-Jul-17	July	2017	WE2	Whole Water	Mesocosm	6	NA	NA	Yes
+BIE2017_0021	12-Jul-17	July	2017	WE2	Whole Water	Mesocosm	6	NA	NA	Yes
+BIE2017_0022	18-Jul-17	July	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
+BIE2017_0023	18-Jul-17	July	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
+BIE2017_0024	18-Jul-17	July	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
+BIE2017_0025	18-Jul-17	July	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
+BIE2017_0026	25-Jul-17	July	2017	WE2	Whole Water	Mesocosm	48	NA	NA	Yes
+BIE2017_0027	25-Jul-17	July	2017	WE2	Whole Water	Mesocosm	48	NA	NA	Yes
+BIE2017_0028	25-Jul-17	July	2017	WE2	Whole Water	Mesocosm	48	NA	NA	Yes
+BIE2017_0029	25-Jul-17	July	2017	WE2	Whole Water	Mesocosm	48	NA	NA	Yes
+BIE2017_0030	1-Aug-17	August	2017	WE2	Whole Water	Mesocosm	20.1	NA	NA	Yes
+BIE2017_0031	1-Aug-17	August	2017	WE2	Whole Water	Mesocosm	20.1	NA	NA	Yes
+BIE2017_0032	1-Aug-17	August	2017	WE2	Whole Water	Mesocosm	20.1	NA	NA	Yes
+BIE2017_0033	1-Aug-17	August	2017	WE2	Whole Water	Mesocosm	20.1	NA	NA	Yes
+BIE2017_0034	15-Aug-17	August	2017	WE2	Whole Water	Mesocosm	27	NA	NA	Yes
+BIE2017_0035	15-Aug-17	August	2017	WE2	Whole Water	Mesocosm	27	NA	NA	Yes
+BIE2017_0036	15-Aug-17	August	2017	WE2	Whole Water	Mesocosm	27	NA	NA	Yes
+BIE2017_0037	15-Aug-17	August	2017	WE2	Whole Water	Mesocosm	27	NA	NA	Yes
+BIE2017_0038	22-Aug-17	August	2017	WE2	Whole Water	Mesocosm	85	NA	NA	Yes
+BIE2017_0039	22-Aug-17	August	2017	WE2	Whole Water	Mesocosm	85	NA	NA	Yes
+BIE2017_0040	22-Aug-17	August	2017	WE2	Whole Water	Mesocosm	85	NA	NA	Yes
+BIE2017_0041	22-Aug-17	August	2017	WE2	Whole Water	Mesocosm	85	NA	NA	No
+BIE2017_0042	30-Aug-17	August	2017	EC973	Whole Water	Mesocosm	53	NA	NA	Yes
+BIE2017_0043	30-Aug-17	August	2017	EC973	Whole Water	Mesocosm	53	NA	NA	Yes
+BIE2017_0044	30-Aug-17	August	2017	EC973	Whole Water	Mesocosm	53	NA	NA	Yes
+BIE2017_0045	30-Aug-17	August	2017	EC973	Whole Water	Mesocosm	53	NA	NA	Yes
+BIE2017_0046	31-Aug-17	August	2017	EC885	Whole Water	Mesocosm	17.4	NA	NA	Yes
+BIE2017_0047	31-Aug-17	August	2017	EC885	Whole Water	Mesocosm	17.4	NA	NA	Yes
+BIE2017_0048	31-Aug-17	August	2017	EC885	Whole Water	Mesocosm	17.4	NA	NA	Yes
+BIE2017_0049	31-Aug-17	August	2017	EC885	Whole Water	Mesocosm	17.4	NA	NA	Yes
+BIE2017_0050	6-Sep-17	September	2017	WE2	Whole Water	Mesocosm	49	NA	NA	Yes
+BIE2017_0051	6-Sep-17	September	2017	WE2	Whole Water	Mesocosm	49	NA	NA	Yes
+BIE2017_0052	6-Sep-17	September	2017	WE2	Whole Water	Mesocosm	49	NA	NA	No
+BIE2017_0053	6-Sep-17	September	2017	WE2	Whole Water	Mesocosm	49	NA	NA	Yes
+BIE2017_0054	12-Sep-17	September	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
+BIE2017_0055	12-Sep-17	September	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
+BIE2017_0056	12-Sep-17	September	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
+BIE2017_0057	12-Sep-17	September	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
+BIE2017_0058	19-Sep-17	September	2017	WE2	Whole Water	Mesocosm	46	NA	NA	Yes
+BIE2017_0059	19-Sep-17	September	2017	WE2	Whole Water	Mesocosm	46	NA	NA	Yes
+BIE2017_0060	19-Sep-17	September	2017	WE2	Whole Water	Mesocosm	46	NA	NA	Yes
+BIE2017_0061	19-Sep-17	September	2017	WE2	Whole Water	Mesocosm	46	NA	NA	Yes
+BIE2017_0062	26-Sep-17	September	2017	WE2	Whole Water	Mesocosm	30	NA	NA	Yes
+BIE2017_0063	26-Sep-17	September	2017	WE2	Whole Water	Mesocosm	30	NA	NA	Yes
+BIE2017_0064	26-Sep-17	September	2017	WE2	Whole Water	Mesocosm	30	NA	NA	Yes
+BIE2017_0065	26-Sep-17	September	2017	WE2	Whole Water	Mesocosm	30	NA	NA	Yes
+BIE2017_0066	3-Oct-17	October	2017	EC215	Whole Water	Mesocosm	43	NA	NA	Yes
+BIE2017_0067	3-Oct-17	October	2017	EC215	Whole Water	Mesocosm	43	NA	NA	Yes
+BIE2017_0068	3-Oct-17	October	2017	EC215	Whole Water	Mesocosm	43	NA	NA	No
+BIE2017_0069	3-Oct-17	October	2017	EC215	Whole Water	Mesocosm	43	NA	NA	Yes
+BIE2017_0070	4-Oct-17	October	2017	EC973	Whole Water	Mesocosm	68	NA	NA	Yes
+BIE2017_0071	4-Oct-17	October	2017	EC973	Whole Water	Mesocosm	68	NA	NA	Yes
+BIE2017_0072	4-Oct-17	October	2017	EC973	Whole Water	Mesocosm	68	NA	NA	Yes
+BIE2017_0073	4-Oct-17	October	2017	EC973	Whole Water	Mesocosm	68	NA	NA	Yes
+BIE2017_0074	5-Oct-17	October	2017	EC1461	Whole Water	Mesocosm	15.2	NA	NA	Yes
+BIE2017_0075	5-Oct-17	October	2017	EC1461	Whole Water	Mesocosm	15.2	NA	NA	Yes
+BIE2017_0076	5-Oct-17	October	2017	EC1461	Whole Water	Mesocosm	15.2	NA	NA	Yes
+BIE2017_0077	5-Oct-17	October	2017	EC1461	Whole Water	Mesocosm	15.2	NA	NA	Yes
 BIE2018_0097	10-Jul-18	July	2018	WE2	Whole Water	Mesocosm	5	NA	NA	Yes
 BIE2018_0098	10-Jul-18	July	2018	WE2	Whole Water	Mesocosm	5	NA	NA	Yes
 BIE2018_0099	10-Jul-18	July	2018	WE2	Whole Water	Mesocosm	5	NA	NA	Yes
@@ -32,50 +179,6 @@ BIE2018_0103	10-Jul-18	July	2018	WE2	Whole Water	Mesocosm	5	NA	NA	Yes
 BIE2018_0104	10-Jul-18	July	2018	WE2	Whole Water	Mesocosm	5	NA	NA	Yes
 BIE2018_0105	10-Jul-18	July	2018	WE2	Whole Water	Mesocosm	5	NA	NA	Yes
 BIE2018_0106	10-Jul-18	July	2018	WE2	Whole Water	Mesocosm	5	NA	NA	Yes
-SRR4619374	18-Aug-14	August	2014	WE4	100um ret	Field	5.86	NA	NA	Yes
-SRR3385642	18-Aug-14	August	2014	WE4	Whole Water	Field	5.86	NA	NA	Yes
-BIE2017_0010	27-Jun-17	June	2017	WE2	Whole Water	Mesocosm	5.9	NA	NA	Yes
-BIE2017_0011	27-Jun-17	June	2017	WE2	Whole Water	Mesocosm	5.9	NA	NA	Yes
-BIE2017_0012	27-Jun-17	June	2017	WE2	Whole Water	Mesocosm	5.9	NA	NA	Yes
-BIE2017_0013	27-Jun-17	June	2017	WE2	Whole Water	Mesocosm	5.9	NA	NA	Yes
-SRR4619351	21-Jul-14	July	2014	WE4	100um ret	Field	5.95	NA	NA	Yes
-BIE2017_0018	12-Jul-17	July	2017	WE2	Whole Water	Mesocosm	6	NA	NA	Yes
-BIE2017_0019	12-Jul-17	July	2017	WE2	Whole Water	Mesocosm	6	NA	NA	Yes
-BIE2017_0020	12-Jul-17	July	2017	WE2	Whole Water	Mesocosm	6	NA	NA	Yes
-BIE2017_0021	12-Jul-17	July	2017	WE2	Whole Water	Mesocosm	6	NA	NA	Yes
-SRR4619338	29-Jul-14	July	2014	WE4	100um ret	Field	6.12	NA	NA	Yes
-SRR3385635	29-Jul-14	July	2014	WE4	Whole Water	Field	6.12	NA	NA	Yes
-SRR4619342	8-Jul-14	July	2014	WE2	100um ret	Field	6.85	NA	NA	Yes
-SRR3385677	8-Jul-14	July	2014	WE2	Whole Water	Field	6.85	NA	NA	Yes
-SRR4619384	15-Oct-14	October	2014	WE2	100um ret	Field	6.85	NA	NA	Yes
-SRR3385667	15-Oct-14	October	2014	WE2	Whole Water	Field	6.85	NA	NA	Yes
-SRR4619341	8-Jul-14	July	2014	WE12	100um ret	Field	6.98	NA	NA	Yes
-SRR3385678	8-Jul-14	July	2014	WE12	Whole Water	Field	6.98	NA	NA	Yes
-E2019_1151_1	17-Sep-19	September	2019	Unnamed7	Whole Water	Mesocosm	7	NA	NA	Yes
-E2019_1151_2	17-Sep-19	September	2019	Unnamed7	Whole Water	Mesocosm	7	NA	NA	Yes
-E2019_1152_1_2	17-Sep-19	September	2019	Unnamed7	Whole Water	Mesocosm	7	NA	NA	Yes
-E2019_1152_2	17-Sep-19	September	2019	Unnamed7	Whole Water	Mesocosm	7	NA	NA	Yes
-E2019_1153_1	17-Sep-19	September	2019	Unnamed7	Whole Water	Mesocosm	7	NA	NA	Yes
-E2019_1153_2	17-Sep-19	September	2019	Unnamed7	Whole Water	Mesocosm	7	NA	NA	Yes
-E2019_1154_1	17-Sep-19	September	2019	Unnamed7	Whole Water	Mesocosm	7	NA	NA	Yes
-E2019_1154_2	17-Sep-19	September	2019	Unnamed7	Whole Water	Mesocosm	7	NA	NA	Yes
-SRR4619380	20-Oct-14	October	2014	WE2	100um ret	Field	7.23	NA	NA	Yes
-SRR3385670	20-Oct-14	October	2014	WE2	Whole Water	Field	7.23	NA	NA	Yes
-E2019_1176_1	20-Sep-19	September	2019	Unnamed8	Whole Water	Mesocosm	7.7	NA	NA	Yes
-E2019_1176_2	20-Sep-19	September	2019	Unnamed8	Whole Water	Mesocosm	7.7	NA	NA	Yes
-E2019_1177_1_2	20-Sep-19	September	2019	Unnamed8	Whole Water	Mesocosm	7.7	NA	NA	Yes
-E2019_1177_2	20-Sep-19	September	2019	Unnamed8	Whole Water	Mesocosm	7.7	NA	NA	Yes
-SRR4619355	14-Jul-14	July	2014	WE12	100um ret	Field	7.74	NA	NA	Yes
-SRR4619375	30-Jun-14	June	2014	WE12	100um ret	Field	7.88	NA	NA	Yes
-SRR3385662	30-Jun-14	June	2014	WE12	Whole Water	Field	7.88	NA	NA	Yes
-SRR4619381	6-Oct-14	October	2014	WE2	100um ret	Field	8.06	NA	NA	Yes
-SRR3385664	6-Oct-14	October	2014	WE2	Whole Water	Field	8.06	NA	NA	Yes
-BIE2018_0529	14-Sep-18	September	2018	TWI	Whole Water	Mesocosm	8.2	NA	NA	Yes
-BIE2018_0530	14-Sep-18	September	2018	TWI	Whole Water	Mesocosm	8.2	NA	NA	Yes
-BIE2018_0531	14-Sep-18	September	2018	TWI	Whole Water	Mesocosm	8.2	NA	NA	Yes
-BIE2018_0532	14-Sep-18	September	2018	TWI	Whole Water	Mesocosm	8.2	NA	NA	Yes
-SRR4619388	29-Sep-14	September	2014	WE4	100um ret	Field	9.21	NA	NA	Yes
-SRR4619350	29-Jul-14	July	2014	WE2	100um ret	Field	10.02	NA	NA	Yes
 BIE2018_0145	24-Jul-18	July	2018	WE2	Whole Water	Mesocosm	10.1	NA	NA	Yes
 BIE2018_0146	24-Jul-18	July	2018	WE2	Whole Water	Mesocosm	10.1	NA	NA	Yes
 BIE2018_0147	24-Jul-18	July	2018	WE2	Whole Water	Mesocosm	10.1	NA	NA	Yes
@@ -84,84 +187,6 @@ BIE2018_0151	24-Jul-18	July	2018	WE2	Whole Water	Mesocosm	10.1	NA	NA	Yes
 BIE2018_0152	24-Jul-18	July	2018	WE2	Whole Water	Mesocosm	10.1	NA	NA	Yes
 BIE2018_0153	24-Jul-18	July	2018	WE2	Whole Water	Mesocosm	10.1	NA	NA	Yes
 BIE2018_0154	24-Jul-18	July	2018	WE2	Whole Water	Mesocosm	10.1	NA	NA	Yes
-SRR4619345	14-Jul-14	July	2014	WE2	100um ret	Field	10.43	NA	NA	Yes
-SRR3385680	14-Jul-14	July	2014	WE2	Whole Water	Field	10.43	NA	NA	Yes
-SRR4619340	16-Jun-14	June	2014	WE2	100um ret	Field	10.72	NA	NA	Yes
-SRR4619369	11-Aug-14	August	2014	WE12	100um ret	Field	11.58	NA	NA	Yes
-BIE2018_0337	10-Aug-18	August	2018	TWI	Whole Water	Mesocosm	11.9	NA	NA	Yes
-BIE2018_0338	10-Aug-18	August	2018	TWI	Whole Water	Mesocosm	11.9	NA	NA	Yes
-BIE2018_0339	10-Aug-18	August	2018	TWI	Whole Water	Mesocosm	11.9	NA	NA	Yes
-BIE2018_0340	10-Aug-18	August	2018	TWI	Whole Water	Mesocosm	11.9	NA	NA	Yes
-SRR4619335	16-Jun-14	June	2014	WE4	100um ret	Field	12.26	NA	NA	Yes
-SRR3385638	16-Jun-14	June	2014	WE4	Whole Water	Field	12.26	NA	NA	Yes
-SRR4619348	23-Sep-14	September	2014	WE2	100um ret	Field	12.64	NA	NA	Yes
-SRR3385657	23-Sep-14	September	2014	WE2	Whole Water	Field	12.64	NA	NA	Yes
-SRR4619343	30-Jun-14	June	2014	WE4	100um ret	Field	12.93	NA	NA	Yes
-SRR3385673	30-Jun-14	June	2014	WE4	Whole Water	Field	12.93	NA	NA	Yes
-BIE2017_0014	6-Jul-17	July	2017	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
-BIE2017_0015	6-Jul-17	July	2017	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
-BIE2017_0016	6-Jul-17	July	2017	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
-BIE2017_0017	6-Jul-17	July	2017	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
-BIE2018_0433	21-Aug-18	August	2018	WE12	Whole Water	Mesocosm	13	NA	NA	Yes
-BIE2018_0434	21-Aug-18	August	2018	WE12	Whole Water	Mesocosm	13	NA	NA	Yes
-BIE2018_0435	21-Aug-18	August	2018	WE12	Whole Water	Mesocosm	13	NA	NA	Yes
-BIE2018_0436	21-Aug-18	August	2018	WE12	Whole Water	Mesocosm	13	NA	NA	Yes
-BIE2018_0481	18-Sep-18	September	2018	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
-BIE2018_0482	18-Sep-18	September	2018	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
-BIE2018_0483	18-Sep-18	September	2018	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
-BIE2018_0484	18-Sep-18	September	2018	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
-BIE2018_0487	18-Sep-18	September	2018	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
-BIE2018_0488	18-Sep-18	September	2018	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
-BIE2018_0489	18-Sep-18	September	2018	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
-BIE2018_0490	18-Sep-18	September	2018	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
-SRR4619363	15-Sep-14	September	2014	WE2	100um ret	Field	13.72	NA	NA	Yes
-SRR3385654	15-Sep-14	September	2014	WE2	Whole Water	Field	13.72	NA	NA	Yes
-BIE2017_0074	5-Oct-17	October	2017	EC1461	Whole Water	Mesocosm	15.2	NA	NA	Yes
-BIE2017_0075	5-Oct-17	October	2017	EC1461	Whole Water	Mesocosm	15.2	NA	NA	Yes
-BIE2017_0076	5-Oct-17	October	2017	EC1461	Whole Water	Mesocosm	15.2	NA	NA	Yes
-BIE2017_0077	5-Oct-17	October	2017	EC1461	Whole Water	Mesocosm	15.2	NA	NA	Yes
-SRR4619353	21-Jul-14	July	2014	WE2	100um ret	Field	16.26	NA	NA	Yes
-SRR4619385	23-Sep-14	September	2014	WE12	100um ret	Field	16.97	NA	NA	Yes
-SRR3385658	23-Sep-14	September	2014	WE12	Whole Water	Field	16.97	NA	NA	Yes
-BIE2018_0385	14-Aug-18	August	2018	WE2	Whole Water	Mesocosm	17.2	NA	NA	Yes
-BIE2018_0386	14-Aug-18	August	2018	WE2	Whole Water	Mesocosm	17.2	NA	NA	Yes
-BIE2018_0387	14-Aug-18	August	2018	WE2	Whole Water	Mesocosm	17.2	NA	NA	Yes
-BIE2018_0388	14-Aug-18	August	2018	WE2	Whole Water	Mesocosm	17.2	NA	NA	Yes
-BIE2018_0391	14-Aug-18	August	2018	WE2	Whole Water	Mesocosm	17.2	NA	NA	Yes
-BIE2018_0392	14-Aug-18	August	2018	WE2	Whole Water	Mesocosm	17.2	NA	NA	Yes
-BIE2018_0393	14-Aug-18	August	2018	WE2	Whole Water	Mesocosm	17.2	NA	NA	Yes
-BIE2018_0394	14-Aug-18	August	2018	WE2	Whole Water	Mesocosm	17.2	NA	NA	Yes
-BIE2017_0046	31-Aug-17	August	2017	EC885	Whole Water	Mesocosm	17.4	NA	NA	Yes
-BIE2017_0047	31-Aug-17	August	2017	EC885	Whole Water	Mesocosm	17.4	NA	NA	Yes
-BIE2017_0048	31-Aug-17	August	2017	EC885	Whole Water	Mesocosm	17.4	NA	NA	Yes
-BIE2017_0049	31-Aug-17	August	2017	EC885	Whole Water	Mesocosm	17.4	NA	NA	Yes
-SRR4619372	4-Aug-14	August	2014	WE4	100um ret	Field	18.11	NA	NA	Yes
-SRR3385639	4-Aug-14	August	2014	WE4	Whole Water	Field	18.11	NA	NA	Yes
-SRR4619362	15-Sep-14	September	2014	WE12	100um ret	Field	18.49	NA	NA	Yes
-SRR3385655	15-Sep-14	September	2014	WE12	Whole Water	Field	18.49	NA	NA	Yes
-SRR4619352	21-Jul-14	July	2014	WE12	100um ret	Field	18.62	NA	NA	Yes
-SRR4619337	30-Jun-14	June	2014	WE2	100um ret	Field	19.94	NA	NA	Yes
-SRR3385649	30-Jun-14	June	2014	WE2	Whole Water	Field	19.94	NA	NA	Yes
-BIE2017_0030	1-Aug-17	August	2017	WE2	Whole Water	Mesocosm	20.1	NA	NA	Yes
-BIE2017_0031	1-Aug-17	August	2017	WE2	Whole Water	Mesocosm	20.1	NA	NA	Yes
-BIE2017_0032	1-Aug-17	August	2017	WE2	Whole Water	Mesocosm	20.1	NA	NA	Yes
-BIE2017_0033	1-Aug-17	August	2017	WE2	Whole Water	Mesocosm	20.1	NA	NA	Yes
-BIE2018_0241	3-Aug-18	August	2018	TWI	Whole Water	Mesocosm	20.3	NA	NA	Yes
-BIE2018_0242	3-Aug-18	August	2018	TWI	Whole Water	Mesocosm	20.3	NA	NA	Yes
-BIE2018_0243	3-Aug-18	August	2018	TWI	Whole Water	Mesocosm	20.3	NA	NA	Yes
-BIE2018_0244	3-Aug-18	August	2018	TWI	Whole Water	Mesocosm	20.3	NA	NA	Yes
-SRR4619358	8-Sep-14	September	2014	WE2	100um ret	Field	20.77	NA	NA	Yes
-SRR3385650	8-Sep-14	September	2014	WE2	Whole Water	Field	20.77	NA	NA	Yes
-BIE2018_0289	7-Aug-18	August	2018	WE2	Whole Water	Mesocosm	21.5	NA	NA	Yes
-BIE2018_0290	7-Aug-18	August	2018	WE2	Whole Water	Mesocosm	21.5	NA	NA	Yes
-BIE2018_0291	7-Aug-18	August	2018	WE2	Whole Water	Mesocosm	21.5	NA	NA	Yes
-BIE2018_0292	7-Aug-18	August	2018	WE2	Whole Water	Mesocosm	21.5	NA	NA	Yes
-BIE2018_0295	7-Aug-18	August	2018	WE2	Whole Water	Mesocosm	21.5	NA	NA	Yes
-BIE2018_0296	7-Aug-18	August	2018	WE2	Whole Water	Mesocosm	21.5	NA	NA	Yes
-BIE2018_0297	7-Aug-18	August	2018	WE2	Whole Water	Mesocosm	21.5	NA	NA	Yes
-BIE2018_0298	7-Aug-18	August	2018	WE2	Whole Water	Mesocosm	21.5	NA	NA	Yes
-SRR4619387	29-Sep-14	September	2014	WE12	100um ret	Field	22.25	NA	NA	Yes
-SRR3385663	29-Sep-14	September	2014	WE12	Whole Water	Field	22.25	NA	NA	Yes
 BIE2018_0193	31-Jul-18	July	2018	WE2	Whole Water	Mesocosm	22.4	NA	NA	Yes
 BIE2018_0194	31-Jul-18	July	2018	WE2	Whole Water	Mesocosm	22.4	NA	NA	Yes
 BIE2018_0195	31-Jul-18	July	2018	WE2	Whole Water	Mesocosm	22.4	NA	NA	Yes
@@ -170,95 +195,69 @@ BIE2018_0199	31-Jul-18	July	2018	WE2	Whole Water	Mesocosm	22.4	NA	NA	Yes
 BIE2018_0200	31-Jul-18	July	2018	WE2	Whole Water	Mesocosm	22.4	NA	NA	Yes
 BIE2018_0201	31-Jul-18	July	2018	WE2	Whole Water	Mesocosm	22.4	NA	NA	Yes
 BIE2018_0202	31-Jul-18	July	2018	WE2	Whole Water	Mesocosm	22.4	NA	NA	Yes
-SRR4619361	8-Sep-14	September	2014	WE12	100um ret	Field	23.2	NA	NA	Yes
-SRR3385652	8-Sep-14	September	2014	WE12	Whole Water	Field	23.2	NA	NA	Yes
-SRR4619356	2-Sep-14	September	2014	WE12	100um ret	Field	23.62	NA	NA	Yes
-SRR3385647	2-Sep-14	September	2014	WE12	Whole Water	Field	23.62	NA	NA	Yes
-BIE2017_0006	13-Jun-17	June	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
-BIE2017_0007	13-Jun-17	June	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
-BIE2017_0008	13-Jun-17	June	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
-BIE2017_0009	13-Jun-17	June	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
-BIE2017_0022	18-Jul-17	July	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
-BIE2017_0023	18-Jul-17	July	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
-BIE2017_0024	18-Jul-17	July	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
-BIE2017_0025	18-Jul-17	July	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
-BIE2017_0054	12-Sep-17	September	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
-BIE2017_0055	12-Sep-17	September	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
-BIE2017_0056	12-Sep-17	September	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
-BIE2017_0057	12-Sep-17	September	2017	WE2	Whole Water	Mesocosm	25	NA	NA	Yes
-SRR4619360	8-Sep-14	September	2014	WE4	100um ret	Field	26.24	NA	NA	Yes
-SRR3385653	8-Sep-14	September	2014	WE4	Whole Water	Field	26.24	NA	NA	Yes
-BIE2017_0034	15-Aug-17	August	2017	WE2	Whole Water	Mesocosm	27	NA	NA	Yes
-BIE2017_0035	15-Aug-17	August	2017	WE2	Whole Water	Mesocosm	27	NA	NA	Yes
-BIE2017_0036	15-Aug-17	August	2017	WE2	Whole Water	Mesocosm	27	NA	NA	Yes
-BIE2017_0037	15-Aug-17	August	2017	WE2	Whole Water	Mesocosm	27	NA	NA	Yes
-SRR4619376	25-Aug-14	August	2014	WE2	100um ret	Field	27.1	NA	NA	Yes
-SRR3385643	25-Aug-14	August	2014	WE2	Whole Water	Field	27.1	NA	NA	Yes
-SRR4619359	2-Sep-14	September	2014	WE4	100um ret	Field	28.42	NA	NA	Yes
-SRR3385648	2-Sep-14	September	2014	WE4	Whole Water	Field	28.42	NA	NA	Yes
-SRR4619347	4-Aug-14	August	2014	WE2	100um ret	Field	29.44	NA	NA	Yes
-SRR3385636	4-Aug-14	August	2014	WE2	Whole Water	Field	29.44	NA	NA	Yes
-BIE2017_0062	26-Sep-17	September	2017	WE2	Whole Water	Mesocosm	30	NA	NA	Yes
-BIE2017_0063	26-Sep-17	September	2017	WE2	Whole Water	Mesocosm	30	NA	NA	Yes
-BIE2017_0064	26-Sep-17	September	2017	WE2	Whole Water	Mesocosm	30	NA	NA	Yes
-BIE2017_0065	26-Sep-17	September	2017	WE2	Whole Water	Mesocosm	30	NA	NA	Yes
-SRR4619371	11-Aug-14	August	2014	WE4	100um ret	Field	30.23	NA	NA	Yes
-SRR4619344	29-Jul-14	July	2014	WE12	100um ret	Field	33.15	NA	NA	Yes
-SRR3385634	29-Jul-14	July	2014	WE12	Whole Water	Field	33.15	NA	NA	Yes
-SRR4619336	18-Aug-14	August	2014	WE12	100um ret	Field	33.35	NA	NA	Yes
-SRR3385641	18-Aug-14	August	2014	WE12	Whole Water	Field	33.35	NA	NA	Yes
-SRR4619339	16-Jun-14	June	2014	WE12	100um ret	Field	34.37	NA	NA	Yes
-E2019_1051_1	2-Aug-19	August	2019	Unnamed3	Whole Water	Mesocosm	36	NA	NA	Yes
-E2019_1051_2	2-Aug-19	August	2019	Unnamed3	Whole Water	Mesocosm	36	NA	NA	Yes
-E2019_1052_1	2-Aug-19	August	2019	Unnamed3	Whole Water	Mesocosm	36	NA	NA	Yes
-E2019_1052_2	2-Aug-19	August	2019	Unnamed3	Whole Water	Mesocosm	36	NA	NA	Yes
-E2019_1053_1	2-Aug-19	August	2019	Unnamed3	Whole Water	Mesocosm	36	NA	NA	Yes
-E2019_1053_2	2-Aug-19	August	2019	Unnamed3	Whole Water	Mesocosm	36	NA	NA	Yes
-E2019_1054_1	2-Aug-19	August	2019	Unnamed3	Whole Water	Mesocosm	36	NA	NA	Yes
-E2019_1054_2	2-Aug-19	August	2019	Unnamed3	Whole Water	Mesocosm	36	NA	NA	Yes
-SRR4619357	2-Sep-14	September	2014	WE2	100um ret	Field	36.74	NA	NA	Yes
-SRR3385646	2-Sep-14	September	2014	WE2	Whole Water	Field	36.74	NA	NA	Yes
-SRR4619377	25-Aug-14	August	2014	WE12	100um ret	Field	38.28	NA	NA	Yes
-SRR3385644	25-Aug-14	August	2014	WE12	Whole Water	Field	38.28	NA	NA	Yes
-SRR4619370	18-Aug-14	August	2014	WE2	100um ret	Field	39.39	NA	NA	Yes
-SRR3385640	18-Aug-14	August	2014	WE2	Whole Water	Field	39.39	NA	NA	Yes
-BIE2017_0066	3-Oct-17	October	2017	EC215	Whole Water	Mesocosm	43	NA	NA	Yes
-BIE2017_0067	3-Oct-17	October	2017	EC215	Whole Water	Mesocosm	43	NA	NA	Yes
-BIE2017_0068	3-Oct-17	October	2017	EC215	Whole Water	Mesocosm	43	NA	NA	No
-BIE2017_0069	3-Oct-17	October	2017	EC215	Whole Water	Mesocosm	43	NA	NA	Yes
-BIE2017_0058	19-Sep-17	September	2017	WE2	Whole Water	Mesocosm	46	NA	NA	Yes
-BIE2017_0059	19-Sep-17	September	2017	WE2	Whole Water	Mesocosm	46	NA	NA	Yes
-BIE2017_0060	19-Sep-17	September	2017	WE2	Whole Water	Mesocosm	46	NA	NA	Yes
-BIE2017_0061	19-Sep-17	September	2017	WE2	Whole Water	Mesocosm	46	NA	NA	Yes
-BIE2017_0026	25-Jul-17	July	2017	WE2	Whole Water	Mesocosm	48	NA	NA	Yes
-BIE2017_0027	25-Jul-17	July	2017	WE2	Whole Water	Mesocosm	48	NA	NA	Yes
-BIE2017_0028	25-Jul-17	July	2017	WE2	Whole Water	Mesocosm	48	NA	NA	Yes
-BIE2017_0029	25-Jul-17	July	2017	WE2	Whole Water	Mesocosm	48	NA	NA	Yes
-BIE2017_0050	6-Sep-17	September	2017	WE2	Whole Water	Mesocosm	49	NA	NA	Yes
-BIE2017_0051	6-Sep-17	September	2017	WE2	Whole Water	Mesocosm	49	NA	NA	Yes
-BIE2017_0052	6-Sep-17	September	2017	WE2	Whole Water	Mesocosm	49	NA	NA	No
-BIE2017_0053	6-Sep-17	September	2017	WE2	Whole Water	Mesocosm	49	NA	NA	Yes
-BIE2017_0042	30-Aug-17	August	2017	EC973	Whole Water	Mesocosm	53	NA	NA	Yes
-BIE2017_0043	30-Aug-17	August	2017	EC973	Whole Water	Mesocosm	53	NA	NA	Yes
-BIE2017_0044	30-Aug-17	August	2017	EC973	Whole Water	Mesocosm	53	NA	NA	Yes
-BIE2017_0045	30-Aug-17	August	2017	EC973	Whole Water	Mesocosm	53	NA	NA	Yes
-SRR4619334	4-Aug-14	August	2014	WE12	100um ret	Field	54.46	NA	NA	Yes
-SRR3385637	4-Aug-14	August	2014	WE12	Whole Water	Field	54.46	NA	NA	Yes
-SRR4619386	29-Sep-14	September	2014	WE2	100um ret	Field	66.63	NA	NA	Yes
-SRR3385661	29-Sep-14	September	2014	WE2	Whole Water	Field	66.63	NA	NA	Yes
-BIE2017_0070	4-Oct-17	October	2017	EC973	Whole Water	Mesocosm	68	NA	NA	Yes
-BIE2017_0071	4-Oct-17	October	2017	EC973	Whole Water	Mesocosm	68	NA	NA	Yes
-BIE2017_0072	4-Oct-17	October	2017	EC973	Whole Water	Mesocosm	68	NA	NA	Yes
-BIE2017_0073	4-Oct-17	October	2017	EC973	Whole Water	Mesocosm	68	NA	NA	Yes
-SRR4619373	11-Aug-14	August	2014	WE2	100um ret	Field	71.96	NA	NA	Yes
-BIE2017_0038	22-Aug-17	August	2017	WE2	Whole Water	Mesocosm	85	NA	NA	Yes
-BIE2017_0039	22-Aug-17	August	2017	WE2	Whole Water	Mesocosm	85	NA	NA	Yes
-BIE2017_0040	22-Aug-17	August	2017	WE2	Whole Water	Mesocosm	85	NA	NA	Yes
-BIE2017_0041	22-Aug-17	August	2017	WE2	Whole Water	Mesocosm	85	NA	NA	No
-E2019_1126_1	24-Aug-19	August	2019	Unnamed6	Whole Water	Mesocosm	91	NA	NA	Yes
-E2019_1126_2	24-Aug-19	August	2019	Unnamed6	Whole Water	Mesocosm	91	NA	NA	Yes
-E2019_1127_1	24-Aug-19	August	2019	Unnamed6	Whole Water	Mesocosm	91	NA	NA	Yes
-E2019_1127_2	24-Aug-19	August	2019	Unnamed6	Whole Water	Mesocosm	91	NA	NA	Yes
+BIE2018_0241	3-Aug-18	August	2018	TWI	Whole Water	Mesocosm	20.3	NA	NA	Yes
+BIE2018_0242	3-Aug-18	August	2018	TWI	Whole Water	Mesocosm	20.3	NA	NA	Yes
+BIE2018_0243	3-Aug-18	August	2018	TWI	Whole Water	Mesocosm	20.3	NA	NA	Yes
+BIE2018_0244	3-Aug-18	August	2018	TWI	Whole Water	Mesocosm	20.3	NA	NA	Yes
+BIE2018_0247	3-Aug-18	August	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
+BIE2018_0248	3-Aug-18	August	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
+BIE2018_0249	3-Aug-18	August	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
+BIE2018_0250	3-Aug-18	August	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
+BIE2018_0289	7-Aug-18	August	2018	WE2	Whole Water	Mesocosm	21.5	NA	NA	Yes
+BIE2018_0290	7-Aug-18	August	2018	WE2	Whole Water	Mesocosm	21.5	NA	NA	Yes
+BIE2018_0291	7-Aug-18	August	2018	WE2	Whole Water	Mesocosm	21.5	NA	NA	Yes
+BIE2018_0292	7-Aug-18	August	2018	WE2	Whole Water	Mesocosm	21.5	NA	NA	Yes
+BIE2018_0295	7-Aug-18	August	2018	WE2	Whole Water	Mesocosm	21.5	NA	NA	Yes
+BIE2018_0296	7-Aug-18	August	2018	WE2	Whole Water	Mesocosm	21.5	NA	NA	Yes
+BIE2018_0297	7-Aug-18	August	2018	WE2	Whole Water	Mesocosm	21.5	NA	NA	Yes
+BIE2018_0298	7-Aug-18	August	2018	WE2	Whole Water	Mesocosm	21.5	NA	NA	Yes
+BIE2018_0337	10-Aug-18	August	2018	TWI	Whole Water	Mesocosm	11.9	NA	NA	Yes
+BIE2018_0338	10-Aug-18	August	2018	TWI	Whole Water	Mesocosm	11.9	NA	NA	Yes
+BIE2018_0339	10-Aug-18	August	2018	TWI	Whole Water	Mesocosm	11.9	NA	NA	Yes
+BIE2018_0340	10-Aug-18	August	2018	TWI	Whole Water	Mesocosm	11.9	NA	NA	Yes
+BIE2018_0343	10-Aug-18	August	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
+BIE2018_0344	10-Aug-18	August	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
+BIE2018_0345	10-Aug-18	August	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
+BIE2018_0346	10-Aug-18	August	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
+BIE2018_0385	14-Aug-18	August	2018	WE2	Whole Water	Mesocosm	17.2	NA	NA	Yes
+BIE2018_0386	14-Aug-18	August	2018	WE2	Whole Water	Mesocosm	17.2	NA	NA	Yes
+BIE2018_0387	14-Aug-18	August	2018	WE2	Whole Water	Mesocosm	17.2	NA	NA	Yes
+BIE2018_0388	14-Aug-18	August	2018	WE2	Whole Water	Mesocosm	17.2	NA	NA	Yes
+BIE2018_0391	14-Aug-18	August	2018	WE2	Whole Water	Mesocosm	17.2	NA	NA	Yes
+BIE2018_0392	14-Aug-18	August	2018	WE2	Whole Water	Mesocosm	17.2	NA	NA	Yes
+BIE2018_0393	14-Aug-18	August	2018	WE2	Whole Water	Mesocosm	17.2	NA	NA	Yes
+BIE2018_0394	14-Aug-18	August	2018	WE2	Whole Water	Mesocosm	17.2	NA	NA	Yes
+BIE2018_0433	21-Aug-18	August	2018	WE12	Whole Water	Mesocosm	13	NA	NA	Yes
+BIE2018_0434	21-Aug-18	August	2018	WE12	Whole Water	Mesocosm	13	NA	NA	Yes
+BIE2018_0435	21-Aug-18	August	2018	WE12	Whole Water	Mesocosm	13	NA	NA	Yes
+BIE2018_0436	21-Aug-18	August	2018	WE12	Whole Water	Mesocosm	13	NA	NA	Yes
+BIE2018_0439	21-Aug-18	August	2018	WE12	filtered	Mesocosm	NA	NA	NA	Yes
+BIE2018_0440	21-Aug-18	August	2018	WE12	filtered	Mesocosm	NA	NA	NA	Yes
+BIE2018_0441	21-Aug-18	August	2018	WE12	filtered	Mesocosm	NA	NA	NA	Yes
+BIE2018_0442	21-Aug-18	August	2018	WE12	filtered	Mesocosm	NA	NA	NA	Yes
+BIE2018_0529	14-Sep-18	September	2018	TWI	Whole Water	Mesocosm	8.2	NA	NA	Yes
+BIE2018_0530	14-Sep-18	September	2018	TWI	Whole Water	Mesocosm	8.2	NA	NA	Yes
+BIE2018_0531	14-Sep-18	September	2018	TWI	Whole Water	Mesocosm	8.2	NA	NA	Yes
+BIE2018_0532	14-Sep-18	September	2018	TWI	Whole Water	Mesocosm	8.2	NA	NA	Yes
+BIE2018_0535	14-Sep-18	September	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
+BIE2018_0536	14-Sep-18	September	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
+BIE2018_0537	14-Sep-18	September	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
+BIE2018_0538	14-Sep-18	September	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
+BIE2018_0481	18-Sep-18	September	2018	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
+BIE2018_0482	18-Sep-18	September	2018	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
+BIE2018_0483	18-Sep-18	September	2018	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
+BIE2018_0484	18-Sep-18	September	2018	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
+BIE2018_0487	18-Sep-18	September	2018	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
+BIE2018_0488	18-Sep-18	September	2018	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
+BIE2018_0489	18-Sep-18	September	2018	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
+BIE2018_0490	18-Sep-18	September	2018	WE2	Whole Water	Mesocosm	13	NA	NA	Yes
+MC2019_0028	22-Jul-19	July	2019	WE8	Colony	Colony	NA	11-Dec-19	Yes	No
+MC2019_0031	22-Jul-19	July	2019	WE8	Colony	Colony	NA	11-Dec-19	Yes	No
+MC2019_0033	22-Jul-19	July	2019	WE8	Colony	Colony	NA	11-Dec-19	Yes	No
+MC2019_0034	22-Jul-19	July	2019	WE8	Colony	Colony	NA	11-Dec-19	Yes	Yes
+MC2019_0035	22-Jul-19	July	2019	WE8	Colony	Colony	NA	11-Dec-19	Yes	No
+MC2019_0036	22-Jul-19	July	2019	WE8	Colony	Colony	NA	11-Dec-19	Yes	Yes
+MC2019_0041	22-Jul-19	July	2019	WE8	Colony	Colony	NA	11-Dec-19	Yes	Yes
 E2019_1001_1	23-Jul-19	July	2019	Unnamed1	Whole Water	Mesocosm	129	NA	NA	Yes
 E2019_1001_2	23-Jul-19	July	2019	Unnamed1	Whole Water	Mesocosm	129	NA	NA	Yes
 E2019_1002_1	23-Jul-19	July	2019	Unnamed1	Whole Water	Mesocosm	129	NA	NA	Yes
@@ -267,33 +266,6 @@ E2019_1003_1	23-Jul-19	July	2019	Unnamed1	Whole Water	Mesocosm	129	NA	NA	Yes
 E2019_1003_2	23-Jul-19	July	2019	Unnamed1	Whole Water	Mesocosm	129	NA	NA	Yes
 E2019_1004_1	23-Jul-19	July	2019	Unnamed1	Whole Water	Mesocosm	129	NA	NA	Yes
 E2019_1004_2	23-Jul-19	July	2019	Unnamed1	Whole Water	Mesocosm	129	NA	NA	Yes
-E2019_1076_1	6-Aug-19	August	2019	Unnamed4	Whole Water	Mesocosm	140	NA	NA	Yes
-E2019_1076_2	6-Aug-19	August	2019	Unnamed4	Whole Water	Mesocosm	140	NA	NA	Yes
-E2019_1077_1	6-Aug-19	August	2019	Unnamed4	Whole Water	Mesocosm	140	NA	NA	Yes
-E2019_1077_2	6-Aug-19	August	2019	Unnamed4	Whole Water	Mesocosm	140	NA	NA	Yes
-BIE2018_0247	3-Aug-18	August	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
-BIE2018_0248	3-Aug-18	August	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
-BIE2018_0249	3-Aug-18	August	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
-BIE2018_0250	3-Aug-18	August	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
-BIE2018_0343	10-Aug-18	August	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
-BIE2018_0344	10-Aug-18	August	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
-BIE2018_0345	10-Aug-18	August	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
-BIE2018_0346	10-Aug-18	August	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
-BIE2018_0439	21-Aug-18	August	2018	WE12	filtered	Mesocosm	NA	NA	NA	Yes
-BIE2018_0440	21-Aug-18	August	2018	WE12	filtered	Mesocosm	NA	NA	NA	Yes
-BIE2018_0441	21-Aug-18	August	2018	WE12	filtered	Mesocosm	NA	NA	NA	Yes
-BIE2018_0442	21-Aug-18	August	2018	WE12	filtered	Mesocosm	NA	NA	NA	Yes
-BIE2018_0535	14-Sep-18	September	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
-BIE2018_0536	14-Sep-18	September	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
-BIE2018_0537	14-Sep-18	September	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
-BIE2018_0538	14-Sep-18	September	2018	TWI	filtered	Mesocosm	NA	NA	NA	Yes
-MC2019_0028	22-Jul-19	July	2019	WE8	Colony	Colony	NA	11-Dec-19	Yes	No
-MC2019_0031	22-Jul-19	July	2019	WE8	Colony	Colony	NA	11-Dec-19	Yes	No
-MC2019_0033	22-Jul-19	July	2019	WE8	Colony	Colony	NA	11-Dec-19	Yes	No
-MC2019_0034	22-Jul-19	July	2019	WE8	Colony	Colony	NA	11-Dec-19	Yes	Yes
-MC2019_0035	22-Jul-19	July	2019	WE8	Colony	Colony	NA	11-Dec-19	Yes	No
-MC2019_0036	22-Jul-19	July	2019	WE8	Colony	Colony	NA	11-Dec-19	Yes	Yes
-MC2019_0041	22-Jul-19	July	2019	WE8	Colony	Colony	NA	11-Dec-19	Yes	Yes
 E2019_1028_1	26-Jul-19	July	2019	Unnamed2	filtered	Mesocosm	NA	NA	NA	Yes
 E2019_1028_2	26-Jul-19	July	2019	Unnamed2	filtered	Mesocosm	NA	NA	NA	Yes
 E2019_1029_1	26-Jul-19	July	2019	Unnamed2	filtered	Mesocosm	NA	NA	NA	Yes
@@ -302,6 +274,14 @@ E2019_1026_1	26-Jul-19	July	2019	Unnamed2	Whole Water	Mesocosm	180	NA	NA	Yes
 E2019_1026_2	26-Jul-19	July	2019	Unnamed2	Whole Water	Mesocosm	180	NA	NA	Yes
 E2019_1027_1	26-Jul-19	July	2019	Unnamed2	Whole Water	Mesocosm	180	NA	NA	Yes
 E2019_1027_2	26-Jul-19	July	2019	Unnamed2	Whole Water	Mesocosm	180	NA	NA	Yes
+E2019_1051_1	2-Aug-19	August	2019	Unnamed3	Whole Water	Mesocosm	36	NA	NA	Yes
+E2019_1051_2	2-Aug-19	August	2019	Unnamed3	Whole Water	Mesocosm	36	NA	NA	Yes
+E2019_1052_1	2-Aug-19	August	2019	Unnamed3	Whole Water	Mesocosm	36	NA	NA	Yes
+E2019_1052_2	2-Aug-19	August	2019	Unnamed3	Whole Water	Mesocosm	36	NA	NA	Yes
+E2019_1053_1	2-Aug-19	August	2019	Unnamed3	Whole Water	Mesocosm	36	NA	NA	Yes
+E2019_1053_2	2-Aug-19	August	2019	Unnamed3	Whole Water	Mesocosm	36	NA	NA	Yes
+E2019_1054_1	2-Aug-19	August	2019	Unnamed3	Whole Water	Mesocosm	36	NA	NA	Yes
+E2019_1054_2	2-Aug-19	August	2019	Unnamed3	Whole Water	Mesocosm	36	NA	NA	Yes
 MC2019_0044	5-Aug-19	August	2019	WE8	Colony	Colony	NA	12-Dec-19	Yes	Yes
 MC2019_0047	5-Aug-19	August	2019	WE8	Colony	Colony	NA	12-Dec-19	Yes	Yes
 MC2019_0049	5-Aug-19	August	2019	WE8	Colony	Colony	NA	12-Dec-19	Yes	Yes
@@ -316,6 +296,10 @@ MC2019_0062	5-Aug-19	August	2019	WE8	Colony	Colony	NA	12-Dec-19	Yes	Yes
 MC2019_0064	5-Aug-19	August	2019	WE8	Colony	Colony	NA	12-Dec-19	Yes	Yes
 MC2019_0066	5-Aug-19	August	2019	WE8	Colony	Colony	NA	12-Dec-19	Yes	Yes
 MC2019_0067	5-Aug-19	August	2019	WE8	PBS Blank	Colony	NA	12-Dec-19	No	No
+E2019_1076_1	6-Aug-19	August	2019	Unnamed4	Whole Water	Mesocosm	140	NA	NA	Yes
+E2019_1076_2	6-Aug-19	August	2019	Unnamed4	Whole Water	Mesocosm	140	NA	NA	Yes
+E2019_1077_1	6-Aug-19	August	2019	Unnamed4	Whole Water	Mesocosm	140	NA	NA	Yes
+E2019_1077_2	6-Aug-19	August	2019	Unnamed4	Whole Water	Mesocosm	140	NA	NA	Yes
 E2019_1078_1	6-Aug-19	August	2019	Unnamed4	filtered	Mesocosm	NA	NA	NA	Yes
 E2019_1078_2	6-Aug-19	August	2019	Unnamed4	filtered	Mesocosm	NA	NA	NA	Yes
 E2019_1079_1	6-Aug-19	August	2019	Unnamed4	filtered	Mesocosm	NA	NA	NA	Yes
@@ -335,10 +319,14 @@ E2019_1103_1	21-Aug-19	August	2019	Unnamed5	Whole Water	Mesocosm	140	NA	NA	Yes
 E2019_1103_2	21-Aug-19	August	2019	Unnamed5	Whole Water	Mesocosm	140	NA	NA	Yes
 E2019_1104_1	21-Aug-19	August	2019	Unnamed5	Whole Water	Mesocosm	140	NA	NA	Yes
 E2019_1104_2	21-Aug-19	August	2019	Unnamed5	Whole Water	Mesocosm	140	NA	NA	Yes
-E2019_1128_1	24-Aug-19	August	2019	Unnamed6	filtered	Mesocosm	NA	NA	NA	Yes
-E2019_1128_2	24-Aug-19	August	2019	Unnamed6	filtered	Mesocosm	NA	NA	NA	Yes
-E2019_1129_1	24-Aug-19	August	2019	Unnamed6	filtered	Mesocosm	NA	NA	NA	Yes
-E2019_1129_2	24-Aug-19	August	2019	Unnamed6	filtered	Mesocosm	NA	NA	NA	Yes
+E2019_1126_1	24-Aug-19	August	2019	Unnamed3	Whole Water	Mesocosm	91	NA	NA	Yes
+E2019_1126_2	24-Aug-19	August	2019	Unnamed3	Whole Water	Mesocosm	91	NA	NA	Yes
+E2019_1127_1	24-Aug-19	August	2019	Unnamed3	Whole Water	Mesocosm	91	NA	NA	Yes
+E2019_1127_2	24-Aug-19	August	2019	Unnamed3	Whole Water	Mesocosm	91	NA	NA	Yes
+E2019_1128_1	24-Aug-19	August	2019	Unnamed3	filtered	Mesocosm	NA	NA	NA	Yes
+E2019_1128_2	24-Aug-19	August	2019	Unnamed3	filtered	Mesocosm	NA	NA	NA	Yes
+E2019_1129_1	24-Aug-19	August	2019	Unnamed3	filtered	Mesocosm	NA	NA	NA	Yes
+E2019_1129_2	24-Aug-19	August	2019	Unnamed3	filtered	Mesocosm	NA	NA	NA	Yes
 MC2019_0093	3-Sep-19	September	2019	WE8	Colony	Colony	NA	14-Dec-19	Yes	Yes
 MC2019_0101	3-Sep-19	September	2019	WE8	Colony	Colony	NA	14-Dec-19	Yes	Yes
 MC2019_0102	3-Sep-19	September	2019	WE8	Colony	Colony	NA	14-Dec-19	Yes	Yes
@@ -374,10 +362,22 @@ MC2019_0132	16-Sep-19	September	2019	WE8	Colony	Colony	NA	19-Dec-19	Yes	Yes
 MC2019_0133	16-Sep-19	September	2019	WE8	Colony	Colony	NA	19-Dec-19	Yes	Yes
 MC2019_0134	16-Sep-19	September	2019	WE8	Colony	Colony	NA	19-Dec-19	Yes	Yes
 MC2019_0136	16-Sep-19	September	2019	WE8	PBS Blank	Colony	NA	19-Dec-19	No	No
-E2019_1178_1	20-Sep-19	September	2019	Unnamed8	filtered	Mesocosm	NA	NA	NA	Yes
-E2019_1178_2	20-Sep-19	September	2019	Unnamed8	filtered	Mesocosm	NA	NA	NA	Yes
-E2019_1179_1	20-Sep-19	September	2019	Unnamed8	filtered	Mesocosm	NA	NA	NA	Yes
-E2019_1179_2	20-Sep-19	September	2019	Unnamed8	filtered	Mesocosm	NA	NA	NA	Yes
+E2019_1151_1	17-Sep-19	September	2019	Unnamed3	Whole Water	Mesocosm	7	NA	NA	Yes
+E2019_1151_2	17-Sep-19	September	2019	Unnamed3	Whole Water	Mesocosm	7	NA	NA	Yes
+E2019_1152_1_2	17-Sep-19	September	2019	Unnamed3	Whole Water	Mesocosm	7	NA	NA	Yes
+E2019_1152_2	17-Sep-19	September	2019	Unnamed3	Whole Water	Mesocosm	7	NA	NA	Yes
+E2019_1153_1	17-Sep-19	September	2019	Unnamed3	Whole Water	Mesocosm	7	NA	NA	Yes
+E2019_1153_2	17-Sep-19	September	2019	Unnamed3	Whole Water	Mesocosm	7	NA	NA	Yes
+E2019_1154_1	17-Sep-19	September	2019	Unnamed3	Whole Water	Mesocosm	7	NA	NA	Yes
+E2019_1154_2	17-Sep-19	September	2019	Unnamed3	Whole Water	Mesocosm	7	NA	NA	Yes
+E2019_1176_1	20-Sep-19	September	2019	Unnamed3	Whole Water	Mesocosm	7.7	NA	NA	Yes
+E2019_1176_2	20-Sep-19	September	2019	Unnamed3	Whole Water	Mesocosm	7.7	NA	NA	Yes
+E2019_1177_1_2	20-Sep-19	September	2019	Unnamed3	Whole Water	Mesocosm	7.7	NA	NA	Yes
+E2019_1177_2	20-Sep-19	September	2019	Unnamed3	Whole Water	Mesocosm	7.7	NA	NA	Yes
+E2019_1178_1	20-Sep-19	September	2019	Unnamed3	filtered	Mesocosm	NA	NA	NA	Yes
+E2019_1178_2	20-Sep-19	September	2019	Unnamed3	filtered	Mesocosm	NA	NA	NA	Yes
+E2019_1179_1	20-Sep-19	September	2019	Unnamed3	filtered	Mesocosm	NA	NA	NA	Yes
+E2019_1179_2	20-Sep-19	September	2019	Unnamed3	filtered	Mesocosm	NA	NA	NA	Yes
 BIE_Kit_Control	nan	nan	2019	nan	nan	nan	NA	NA	NA	No
 Kit_Control_1	nan	nan	2019	nan	nan	nan	NA	NA	NA	No
 Kit_Control_4	nan	nan	2019	nan	nan	nan	NA	NA	NA	No
