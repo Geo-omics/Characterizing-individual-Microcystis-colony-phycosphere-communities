@@ -26,8 +26,8 @@ library(forcats)
 
 Pre-processing and Inspection of Coloniality  
 ---
-Import the Microcystis colony data: 
-First, lets start with the data where M = 100.
+Import the Microcystis colony data:  
+First, lets start with the data where M = 100.  
 ```{r}
 #Load dataframes:
 MC_2019.shared_M100 <- read.table("MC2019-MATRIX-PERCENT-M100.txt", header = TRUE, sep="\t")
@@ -73,8 +73,9 @@ MC_2019.merged_M100.long <- merge(MC_2019.merged_M100.long, MC_2019.metadata, by
 drop <- c("Colony_Number", "Amplification", "Enough_reads") #remove these columns, because they are no longer useful
 MC_2019.merged_M100.long <- MC_2019.merged_M100.long[, !(names(MC_2019.merged_M100.long) %in% drop) ]
 ```
+The above error is generated because there is an extra semi-colon separator at the end of the listed taxonomy that we are ignoring.  
 
-What is the composition of the Microcystis nodes in each sample?
+What is the composition of the Microcystis nodes in each sample? Here M = 100.  
 ```{r}
 Microcystis_node_plot_M100 <- filter(MC_2019.merged_M100.long, Genus == "Microcystis_PCC-7914") %>%
   ggplot(aes(fill=as.character(Row.names), y=Perc_abund, x=Sample_ID)) +
@@ -141,7 +142,7 @@ drop <- c("Colony_Number", "Amplification", "Enough_reads") #remove these column
 MC_2019.merged_M854.long <- MC_2019.merged_M854.long[, !(names(MC_2019.merged_M854.long) %in% drop) ]
 ```
 
-What is the composition of the Microcystis nodes in each sample using these cutoffs?
+What is the composition of the Microcystis nodes in each sample using these cutoffs?  
 ```{r}
 Microcystis_node_plot_M854 <- filter(MC_2019.merged_M854.long, Genus == "Microcystis_PCC-7914") %>%
   ggplot(aes(fill=as.character(Row.names), y=Perc_abund, x=Sample_ID)) +
@@ -207,7 +208,7 @@ drop <- c("Colony_Number", "Amplification", "Enough_reads") #remove these column
 MC_2019.merged_M854_no_R.long <- MC_2019.merged_M854_no_R.long[, !(names(MC_2019.merged_M854_no_R.long) %in% drop) ]
 ```
 
-What is the composition of the Microcystis nodes in each sample using these cutoffs?
+What is the composition of the Microcystis nodes in each sample using these cutoffs?  
 ```{r}
 MC_2019.merged_M854_no_R.long$Sample_ID <- factor(MC_2019.merged_M854_no_R.long$Sample_ID, levels=unique(MC_2019.merged_M854_no_R.long$Sample_ID[order(MC_2019.merged_M854_no_R.long$MC_node, MC_2019.merged_M854_no_R.long$Date_Collected)]), ordered = TRUE)
 
@@ -230,7 +231,7 @@ Microcystis_node_plot_M854_no_R <- filter(MC_2019.merged_M854_no_R.long, Genus =
       axis.ticks = element_line(size = 0.1),
       legend.text = element_text(size = 10), legend.title = element_text(size = 8)) +
     ylab("Percent of Total Microcystis") +
-    xlab("Sampling Date")
+    xlab("")
 Microcystis_node_plot_M854_no_R <- Microcystis_node_plot_M854_no_R + labs(fill = "Microcystis Node")
 Microcystis_node_plot_M854_no_R
 ggsave("Microcystis_node_plot_M854_no_R.pdf", plot = Microcystis_node_plot_M854_no_R, width = 110, height = 80, units = "mm", dpi=600)
@@ -238,7 +239,7 @@ ggsave("Microcystis_node_plot_M854_no_R.pdf", plot = Microcystis_node_plot_M854_
 
 The data was cleaned up quite a bit when replacement was not used, however it did not remove the 50:50 split of Microcystis nodes observed with the other results.  
 
-Are these sequences oligotyped the same way as they were using the pre-clustered sequences in mothur?  
+Does the composition of MED nodes resemble the oligotyped composition when using sequences pre-clustered in mothur?  
 ```{r}
 #Load dataframes:
 MC_2019.shared_M854_precluster <- read.table("MC2019-MATRIX-PERCENT-M851-preclustered.txt", header = TRUE, sep="\t")
@@ -284,7 +285,7 @@ drop <- c("Colony_Number", "Amplification", "Enough_reads") #remove these column
 MC_2019.merged_M854_precluster.long <- MC_2019.merged_M854_precluster.long[, !(names(MC_2019.merged_M854_precluster.long) %in% drop) ]
 ```
 
-What is the composition of the Microcystis nodes in each sample using the preclustered sequences?
+What is the composition of the Microcystis nodes in each sample using the preclustered sequences?  
 ```{r}
 Microcystis_node_plot_M851_preclustered <- filter(MC_2019.merged_M854_precluster.long, Genus == "Microcystis_PCC-7914") %>%
   ggplot(aes(fill=as.character(Row.names), y=Perc_abund, x=Sample_ID)) +
@@ -303,9 +304,9 @@ Microcystis_node_plot_M851_preclustered <- filter(MC_2019.merged_M854_precluster
 Microcystis_node_plot_M851_preclustered + labs(fill = "Microcystis Node")
 ggsave("Microcystis_node_plot_M851_preclustered.pdf", plot = Microcystis_node_plot_M851_preclustered, width = 110, height = 80, units = "mm", dpi=320)
 ```
-Yes, this confirms that the difference in oligotyping is due to whether or not the sequences were preclustered.  
+Yes, this confirms that the difference in oligotyping is due to whether or not the sequences were preclustered.   
 
-Below are phoots of each colony identified as an ~equal mixture of Microcystis oligotypes:  
+Below are photos of each colony identified as an ~equal mixture of Microcystis oligotypes:  
 
 **MC2019-0011:**  
 ![Colony 11](/Users/smitdere/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0011.BMP){#id .class width=50% height=50%}![Colony 11](/Users/smitdere/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0011f.BMP){#id .class width=50% height=50%}  
@@ -325,6 +326,11 @@ Below are phoots of each colony identified as an ~equal mixture of Microcystis o
 **MC2019-0093:**  
 ![Colony 93](/Users/smitdere/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0093.BMP){#id .class width=50% height=50%}![Colony 93](/Users/smitdere/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0093f.BMP){#id .class width=50% height=50%} 
 
+How to interpret the colonies with two major Microcystis nodes?  
+When looking at the number of 16S rRNA genes in publicly available and closed Microcystis genomes, they all have 2 rRNA copies. The nucleotide composition of the rRNA gene copies within a single Microcystis genome can either be identical or vary at several nucleotide positions.  
+The interpretation is that colonies with primarily one MED node are composed primarily of a strain with two identical V4 copies. The colonies with primarily two MED nodes at ~equal relative abundance are composed primarily of a strain with two different V4 copies.
+
+The different combinations of MED nodes are being assigned to oligotypes to compare how their microbiomes vary by Microcystis genotype.  
 
 Screening for Contaminants
 ---
@@ -416,7 +422,7 @@ Microcystis_WW_node_abs_abund_plot <- filter(Microcystis_WW_node_abs_abund_sum, 
       axis.title.y = element_text(size=12, margin = margin(t = 0, r = 10, b = 0, l = 0)),
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank(),
-      axis.text.x = element_text(size = 10, color = "black", angle = 45, margin = margin(t = 0, r = 10, b = 0, l = 0)),
+      axis.text.x = element_text(size = 10, color = "black", angle = 45, vjust = 1, hjust =1, margin = margin(t = 10, r = 0, b = 0, l = 0)),
       axis.text.y = element_text(size = 10, color = "black", margin = margin(t = 0, r = 10, b = 0, l = 0)),
       axis.ticks.length= unit(-0.2, "cm"),
       axis.ticks = element_line(size=0.1),
@@ -451,7 +457,7 @@ Microcystis_WW_node_all_years_plot <- ggplot(Microcystis_WW_node_abs_abund_sum, 
       axis.title.y = element_text(size=12, margin = margin(t = 0, r = 10, b = 0, l = 0)),
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank(),
-      axis.text.x = element_text(size = 10, color = "black", angle = 45, margin = margin(t = 0, r = 10, b = 0, l = 0)),
+      axis.text.x = element_text(size = 10, color = "black", margin = margin(t = 10, r = 0, b = 0, l = 0)),
       axis.text.y = element_text(size = 10, color = "black", margin = margin(t = 0, r = 10, b = 0, l = 0)),
       axis.ticks.length= unit(-0.2, "cm"),
       axis.ticks = element_line(size=0.1),
@@ -463,7 +469,6 @@ Microcystis_WW_node_all_years_plot <- ggplot(Microcystis_WW_node_abs_abund_sum, 
 
 Microcystis_WW_node_all_years_plot
 ```
-
 
 Then build a bar plot for each node in the colony dataset:
 ```{r}
@@ -784,76 +789,33 @@ MC_2019_all.dendro <- set(MC_2019_all.dendro, "labels_cex", 0.5)
 #Plot
 Colony_dendrog_plot <- plot(MC_2019_all.dendro, ylab = "Bray-Curtis Dissimilarity")
 ```
-What does the data look like when we remove the colonies with multiple Microcystis nodes:  
+What fraction of the total colonies sampled on each date does each oligotype comprise?  
 ```{r}
-#Take our processed OTU table and remove the metadata columns:
-#Columns 1-47 contain the info we need, the rest is metadata
-#Remove the Microcystis nodes
-MC_2019.matrix_no_mixed <- MC_2019.merged_M854_no_R[MC_2019.merged_M854_no_R$Genus != "Microcystis_PCC-7914",1:45]
-#Remove samples flagged as mixed Microcystis nodes:
-keep <- unique(MC_2019.merged_M854_no_R.long$Sample_ID[MC_2019.merged_M854_no_R.long$MC_node != "mixed"])
-MC_2019.matrix_no_mixed <- MC_2019.matrix_no_mixed[ , colnames(MC_2019.matrix_no_mixed) %in% keep ]
-#Fix up row names and remove the column with nodes.
-rownames(MC_2019.matrix_no_mixed) <- MC_2019.matrix_no_mixed$Row.names
-MC_2019.matrix_no_mixed <- MC_2019.matrix_no_mixed[ , colnames(MC_2019.matrix_no_mixed) != "Row.names" ]
-#Transpose the matrix so that samples are rows and OTUs are columns:
-MC_2019.matrix_no_mixed <- t(MC_2019.matrix_no_mixed)
+#Create a dataframe of the number of colonies of a given Oligotype on each date. Only include samples with enough amplification.
+Oligotype_count_df <- filter(MC_2019.metadata, Enough_reads == "Yes") %>% count(MC_node, Date_Collected, sort=TRUE)
 
-#Build the plot using the metaNMDS function in vegan with three axes:
-set.seed(123)
-NMDS_3_no_mixed <- metaMDS(MC_2019.matrix_no_mixed, distance = "bray", k=3, autotransform = FALSE, try = 40, trymax = 1000)
+#Plot the percent composition of colony oligotypes sampled on each date:
+Colony_Oligotype_composition <- ggplot(Oligotype_count_df, aes(fill=MC_node, y=n, x=Date_Collected)) +
+  geom_bar(position="fill", stat="identity") +
+  theme_classic() +
+  theme(
+    axis.line.x = element_line(size=0.1),
+    axis.line.y = element_line(size=0.1),
+    axis.title.x = element_text(size=10, margin = margin(t = 10, r = 0, b = 0, l = 0)), 
+    axis.title.y = element_text(size=10, margin = margin(t = 0, r = 10, b = 0, l = 0)),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text.x = element_text(size = 8, color = "black", angle = 45, vjust = 1, hjust = 1,
+                               margin = margin(t = 10, r = 0, b = 0, l = 0)),
+    axis.text.y = element_text(size = 8, color = "black", margin = margin(t = 0, r = 10, b = 0, l = 0)),
+    axis.ticks.length = unit(-0.1, "cm"),
+    axis.ticks = element_line(size = 0.1),
+    legend.text = element_text(size = 10), legend.title = element_text(size = 8)) +
+  scale_x_discrete(limits = c("22-Jul-19", "19-Aug-19", "5-Aug-19", "3-Sep-19", "9-Sep-19", "16-Sep-19")) +
+  ylab("Fraction of Sampled Colonies") +
+  xlab("Sampling Date")
+
+Colony_Oligotype_composition <- Colony_Oligotype_composition + labs(fill = "Colony Oligotype")
+Colony_Oligotype_composition
+ggsave("Colony_Oligotype_composition.pdf", plot = Colony_Oligotype_composition, width = 110, height = 80, units = "mm", dpi=600)
 ```
-Check the ordination distances:  
-```{r}
-stressplot(NMDS_3_no_mixed, xlim=c(0,1))
-```
-Make the NMDS plot:  
-```{r}
-#Extract the axis coordinates (the NMDS scores):
-NMDS_3_no_mixed.scores <- as.data.frame(scores(NMDS_3_no_mixed))
-
-#Add metadata:
-NMDS_3_no_mixed.scores <- merge(NMDS_3_no_mixed.scores, MC_2019.metadata, by.x = "row.names", by.y = "Sample_ID", all.x = TRUE)
-rownames(NMDS_3_no_mixed.scores) <- NMDS_3_no_mixed.scores$Row.names
-drop <- "Row.names"
-NMDS_3_no_mixed.scores <- NMDS_3_no_mixed.scores[ , !((NMDS_3_no_mixed.scores) %in% drop)]
-
-NMDS_3D_no_mixed_date_oligo <- plot_ly(NMDS_3_no_mixed.scores, x = ~NMDS1, y = ~NMDS2, z = ~NMDS3, color = ~Date_Collected, colors = c("coral", "gold", "blue", "aquamarine", "deeppink2", "green3"), symbol = ~MC_node, symbols = c("circle", "diamond", "square"), showlegend = T) %>%
-  add_markers(marker = list(line = list(color = "black", width = 0.5),
-                            size = 6)) %>%
-  layout(scene = list(xaxis = list(title = "NMDS1"),
-                      yaxis = list(title = "NMDS2"),
-                      zaxis = list(title = "NMDS3")),
-         annotations = list(text = "Stress = 0.11",
-                            showarrow = F,
-                            align="left",
-                            x=0.8,
-                            y=0.9,
-                            z=2.5))
-NMDS_3D_no_mixed_date_oligo
-```
-Is there still a significant relationship between date and oligotype?  
-```{r}
-ano_oligo_no_mixed <- anosim(MC_2019.matrix_no_mixed, NMDS_3_no_mixed.scores$MC_node, distance = "bray", permutations = 9999)
-ano_date_no_mixed <- anosim(MC_2019.matrix_no_mixed, NMDS_3_no_mixed.scores$Date_Collected, distance = "bray", permutations = 9999)
-
-ano_oligo_no_mixed
-ano_date_no_mixed
-```
-```{r}
-#Make a distance matrix:
-MC_2019_all.dist.no_mixed <- vegdist(MC_2019.matrix_no_mixed, method="bray")
-#Cluster using hierarchical clustering
-MC_2019_all.clust.no_mixed <- hclust(MC_2019_all.dist.no_mixed, method = "average")
-#Get three groups from the hclust dendogram
-MC_2019_all.groups.no_mixed <- cutree(MC_2019_all.clust.no_mixed, k=3)
-
-#Convert clustering results to a dendogram format:
-MC_2019_all.dendro.no_mixed <- as.dendrogram(MC_2019_all.clust.no_mixed)
-MC_2019_all.dendro.no_mixed <- color_branches(MC_2019_all.dendro.no_mixed, k=3, col = c("red", "purple", "blue", "goldenrod"), groupLabels = TRUE)
-MC_2019_all.dendro.no_mixed <- set(MC_2019_all.dendro.no_mixed, "labels_cex", 0.5)
-#Plot
-Colony_dendrog_plot_no_mixed <- plot(MC_2019_all.dendro.no_mixed, ylab = "Bray-Curtis Dissimilarity")
-```
-
-
