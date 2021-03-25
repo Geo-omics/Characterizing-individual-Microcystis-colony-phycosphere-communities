@@ -446,7 +446,7 @@ Microcystis_WW_node_all_years_plot <- ggplot(Microcystis_WW_node_abs_abund_sum, 
     facet_grid(~Year, scales="free_y") +
     scale_color_manual(values=c("coral", "dodgerblue", "chartreuse", "cadetblue4", "burlywood", "cyan3",
                                 "gold", "darkorchid", "deeppink", "plum1", "slategray4", "navy", "red"),
-                       name = "Station") +
+                       name = "Node") +
     theme_classic() +
     theme(
       strip.text = element_text(size = 12),
