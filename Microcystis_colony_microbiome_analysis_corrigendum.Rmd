@@ -711,23 +711,6 @@ ggplot(All_Otu_Sep_16, aes(x=reorder(Row.names, desc(Row.names)), y=Perc_abund))
 
 Screening for contaminants  
 ----
-The presence of Cyanobium in the colonies is surprising, is this a sign of contamination from free-living bacteria?  
-Investigate the images of the colonies with Cyanobium to check for contamination or eukaryotes (did we sequence the guts of a grazer?). Below, the images on the left show standard brightfield microscopy, while the right shows images with phycocyanin autoflourescence.  
-
-**MC2019-0011:**  
-![Colony 11](/Volumes/T7/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0011.BMP){#id .class width=50% height=50%}![Colony 11](/Volumes/T7/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0011f.BMP){#id .class width=50% height=50%}  
-
-**MC2019-0012:**  
-![Colony 12](/Volumes/T7/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0012.BMP){#id .class width=50% height=50%}![Colony 11](/Volumes/T7/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0012f.BMP){#id .class width=50% height=50%}  
-
-**MC2019-0014:**  
-![Colony 14](/Volumes/T7/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0014.BMP){#id .class width=50% height=50%}![Colony 11](/Volumes/T7/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0014f.BMP){#id .class width=50% height=50%}  
-
-**MC2019-0020:**  
-![Colony 20](/Volumes/T7/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0020.BMP){#id .class width=50% height=50%}![Colony 11](/Volumes/T7/Documents/Research/Ma_Colony_Sequencing/2019_Data_mothur/MC2019_0020f.BMP){#id .class width=50% height=50%}  
-
-I cannot visually identifiy contaminating Cyanobium in the images, but if they are there they are likely too small to see with this magnification. There's also no obvious signs of grazers attached to the colonies. There are some free floating Microcystis cells, but I'm interpreting this as cells that were broken off colonies.  
-
 Let's look at the data from the size fractionated H2O2 mesocosm samples to see if these taxa are indeed associated with communities that pass through the 100 um filter or not.  
 ```{r}
 #Import the dataframes:
@@ -2846,8 +2829,8 @@ drop <- c("E2019_1152_1", "E2019_1177_1")
 LE_H2O2_2019_all.merged <- LE_H2O2_2019_all.merged[ , !(names(LE_H2O2_2019_all.merged) %in% drop)]
 
 #Calculate the observation frequency of each OTU, add to dataframe:
-otu_nonzero_counts <- apply(LE_H2O2_2019_all.merged[2:303], 1, function(y) sum(length(which(y > 0))))
-otu_obs_freq <- ( otu_nonzero_counts / 302 ) * 100
+otu_nonzero_counts <- apply(LE_H2O2_2019_all.merged[2:358], 1, function(y) sum(length(which(y > 0))))
+otu_obs_freq <- ( otu_nonzero_counts / 357 ) * 100
 LE_H2O2_2019_all.merged$otu_obs_freq <- otu_obs_freq
 
 #Remove any OTUs with no sequences:
@@ -2877,17 +2860,17 @@ Rarefaction_df <- LE_H2O2_2019_all.merged
 LE_H2O2_2019_all.merged <- LE_H2O2_2019_all.merged[LE_H2O2_2019_all.merged$Genus != "Microcystis_PCC-7914", ]
 
 #Convert to percent abundance:
-LE_H2O2_2019_all.merged[, 2:303] <- apply(LE_H2O2_2019_all.merged[,2:303], 2, function(x) (x / sum(x)) *100 )
+LE_H2O2_2019_all.merged[, 2:358] <- apply(LE_H2O2_2019_all.merged[,2:358], 2, function(x) (x / sum(x)) *100 )
 
 #Add the maximum, mean, and median relative abundance for each OTU as a column in the dataframe (not including zeros):
 LE_H2O2_2019_all.merged.nonzeros <- LE_H2O2_2019_all.merged
 LE_H2O2_2019_all.merged.nonzeros[LE_H2O2_2019_all.merged.nonzeros == 0] <- NA
-LE_H2O2_2019_all.merged$Max_perc_abund <- apply(LE_H2O2_2019_all.merged[2:303], 1, max)
-LE_H2O2_2019_all.merged$Median_perc_abund <- apply(LE_H2O2_2019_all.merged.nonzeros[2:303], 1, median, na.rm=TRUE)
-LE_H2O2_2019_all.merged$Mean_perc_abund <- apply(LE_H2O2_2019_all.merged.nonzeros[2:303], 1, mean, na.rm=TRUE)
+LE_H2O2_2019_all.merged$Max_perc_abund <- apply(LE_H2O2_2019_all.merged[2:358], 1, max)
+LE_H2O2_2019_all.merged$Median_perc_abund <- apply(LE_H2O2_2019_all.merged.nonzeros[2:358], 1, median, na.rm=TRUE)
+LE_H2O2_2019_all.merged$Mean_perc_abund <- apply(LE_H2O2_2019_all.merged.nonzeros[2:358], 1, mean, na.rm=TRUE)
 
 #Convert dataframe to long format:
-LE_H2O2_2019_all.merged.long <- gather(LE_H2O2_2019_all.merged, Sample_ID, Perc_abund, 2:303)
+LE_H2O2_2019_all.merged.long <- gather(LE_H2O2_2019_all.merged, Sample_ID, Perc_abund, 2:358)
 
 #Add metadata:
 LE_H2O2_2019_all.merged.long <- merge(LE_H2O2_2019_all.merged.long, LE_H2O2_2019_all.metadata, by="Sample_ID", all.x = TRUE)
@@ -2907,12 +2890,12 @@ LE_H2O2_2019_all.matrix <- t(LE_H2O2_2019_all.matrix)
 
 #Build the plot using the metaNMDS function in vegan with three axes:
 set.seed(419)
-NMDS_3_all <- metaMDS(LE_H2O2_2019_all.matrix, distance = "bray", k=3, autotransform = FALSE, try = 40, trymax = 5000)
+NMDS_3_all <- metaMDS(LE_H2O2_2019_all.matrix, distance = "bray", k=3, autotransform = FALSE, try = 40, trymax = 5000, maxit = 500, parallel = 4)
 ```
 Let's try an ordination with only two axes:
 ```{r}
 set.seed(444)
-NMDS_2_all <- metaMDS(LE_H2O2_2019_all.matrix, distance = "bray", k=2, autotransform = FALSE, try = 40, trymax = 5000)
+NMDS_2_all <- metaMDS(LE_H2O2_2019_all.matrix, distance = "bray", k=2, autotransform = FALSE, try = 40, trymax = 5000, maxit = 500, parallel = 4)
 ```
 
 Test if distance on plot represents true dissimilarities:
@@ -2928,14 +2911,16 @@ LE_H2O2_2019_all.dist <- vegdist(LE_H2O2_2019_all.matrix, method="bray")
 #Cluster using hierarchical clustering
 LE_H2O2_2019_all.clust <- hclust(LE_H2O2_2019_all.dist, method = "average")
 #Get three groups from the hclust dendogram
-LE_H2O2_2019_all.groups <- cutree(LE_H2O2_2019_all.clust, k=4)
+LE_H2O2_2019_all.groups <- cutree(LE_H2O2_2019_all.clust, k=6)
+#merge groups with metadata to check sample type membership:
+LE_H2O2_2019_all.groups.meta <- merge(LE_H2O2_2019_all.groups, LE_H2O2_2019_all.metadata, by.x = "row.names", by.y = "Sample_ID", all.x = TRUE, all.y=FALSE)
 ```
 
 Plot the results of the clustering:
 ```{r}
 #Convert clustering results to a dendogram format:
 LE_H2O2_2019_all.dendro <- as.dendrogram(LE_H2O2_2019_all.clust)
-LE_H2O2_2019_all.dendro <- color_branches(LE_H2O2_2019_all.dendro, k=4, col = c("red", "purple", "blue", "orange"), groupLabels = TRUE)
+LE_H2O2_2019_all.dendro <- color_branches(LE_H2O2_2019_all.dendro, k=6, col = c("red", "purple", "blue", "orange", "black", "cyan"), groupLabels = TRUE)
 LE_H2O2_2019_all.dendro <- set(LE_H2O2_2019_all.dendro, "labels_cex", 0.5)
 #Plot
 plot(LE_H2O2_2019_all.dendro, ylab = "Bray-Curtis Dissimilarity")
@@ -2958,13 +2943,13 @@ colnames(LE_H2O2_2019_all.groups) <- "Cluster"
 NMDS_3_all.scores <- merge(NMDS_3_all.scores, LE_H2O2_2019_all.groups, by = "row.names")
 
 #Plot
-NMDS_3_3D_with_field <- plot_ly(NMDS_3_all.scores, x = ~NMDS1, y = ~NMDS2, z = ~NMDS3, color = as.character(NMDS_3_all.scores$Cluster), colors = c("purple", "red", "blue", "orange"), symbol = as.character(NMDS_3_all.scores$Sample_Type), symbols=c('circle','diamond','square', "cross"), showlegend = F) %>%
+NMDS_3_3D_with_field <- plot_ly(NMDS_3_all.scores, x = ~NMDS1, y = ~NMDS2, z = ~NMDS3, color = as.character(NMDS_3_all.scores$Cluster), colors = c("purple", "red", "blue", "orange", "black", "cyan"), symbol = as.character(NMDS_3_all.scores$Sample_Type), symbols=c('circle','diamond','square', "cross"), showlegend = F) %>%
   add_markers(marker = list(line = list(color = "black", width = 0.5),
                             size = 6)) %>%
   layout(scene = list(xaxis = list(title = "NMDS1"),
                       yaxis = list(title = "NMDS2"),
                       zaxis = list(title = "NMDS3")),
-         annotations = list(text = "Stress = 0.090",
+         annotations = list(text = "Stress = 0.10",
                             showarrow = F,
                             align="left",
                             x=0.8,
@@ -3031,7 +3016,7 @@ NMDS_3_all.1v3.plot <- ggplot(NMDS_3_all.scores, aes(x=NMDS3, y=NMDS1)) +
 #Plot axis 2 vs axis 3:
 NMDS_3_all.2v3.plot <- ggplot(NMDS_3_all.scores, aes(x=NMDS3, y=NMDS2)) +
   geom_point(size = 3, alpha=0.6, aes(shape=Sample_Type, colour=as.factor(Cluster))) +
-  ggtitle("Stress = 0.09") +
+  ggtitle("Stress = 0.10") +
   theme_classic() +
   theme(
     axis.line.x = element_line(size=0.1),
@@ -3169,7 +3154,7 @@ NMDS_3_3D_field_chl <- plot_ly(NMDS_3_field.scores, x = ~NMDS1, y = ~NMDS2, z = 
   layout(scene = list(xaxis = list(title = "NMDS1"),
                       yaxis = list(title = "NMDS2"),
                       zaxis = list(title = "NMDS3")),
-         annotations = list(text = "Stress = 0.091",
+         annotations = list(text = "Stress = 0.09",
                             showarrow = F,
                             align="left",
                             x=0.8,
@@ -3510,7 +3495,8 @@ filt_OTU_time_series_2019 <- filter(OTU_time_series_df, Year == "2019" & Sample_
       legend.position = "top",
       legend.title = element_text(size=8, margin = margin(t = 0, r = 10, b = 0, l = 0))) +
   scale_x_date(date_breaks = "2 weeks", date_labels = "%d %b %Y") +
-  scale_y_continuous(breaks = seq(0,10, by=2)) +
+  scale_y_continuous(breaks = seq(0,15, by=3)) +
+  coord_cartesian(ylim=c(0,15)) +
   xlab("") +
   ylab(expression("Percent Abundance"))
 
@@ -3569,8 +3555,8 @@ Colony_OTU_time_series_2019 <- filter(OTU_time_series_df, Row.names %in% OTUs_of
       legend.position = "top",
       legend.title = element_text(size=8, margin = margin(t = 0, r = 10, b = 0, l = 0))) +
   scale_x_date(date_breaks = "3 weeks", date_labels = "%d %b %Y") +
-  scale_y_continuous(breaks = seq(0,20, by=5)) +
-  coord_cartesian(ylim=c(0,20)) +
+  scale_y_continuous(breaks = seq(0,50, by=10)) +
+  coord_cartesian(ylim=c(0,50)) +
   xlab("Percent Abundance") +
   ylab(expression("Percent Abundance"))
 
@@ -3598,8 +3584,8 @@ Cyanobium_OTU_time_series_2019 <- filter(OTU_time_series_df, Row.names == "Otu00
       axis.ticks = element_line(size=0.1),
       legend.position = "none") +
   scale_x_date(date_breaks = "3 weeks", date_labels = "%d %b %Y") +
-  scale_y_continuous(breaks = seq(0,70, by=10)) +
-  #coord_cartesian(ylim=c(0,30)) +
+  scale_y_continuous(breaks = seq(0,90, by=30)) +
+  coord_cartesian(ylim=c(0,90)) +
   xlab("Percent Abundance") +
   ylab(expression("Percent Abundance"))
 
@@ -3954,12 +3940,12 @@ How does the hierarchical clustering differ:
 MC_2019_all.dist.noMa <- vegdist(MC_2019.matrix.noMa, method="bray")
 #Cluster using hierarchical clustering
 MC_2019_all.clust.noMa <- hclust(MC_2019_all.dist.noMa, method = "average")
-#Get three groups from the hclust dendogram
-MC_2019_all.groups.noMa <- cutree(MC_2019_all.clust.noMa, k=3)
+#Get groups from the hclust dendogram
+MC_2019_all.groups.noMa <- cutree(MC_2019_all.clust.noMa, k=4)
 
 #Convert clustering results to a dendogram format:
 MC_2019_all.dendro.noMa <- as.dendrogram(MC_2019_all.clust.noMa)
-MC_2019_all.dendro.noMa <- color_branches(MC_2019_all.dendro.noMa, k=5, col = c("black"), groupLabels = TRUE)
+MC_2019_all.dendro.noMa <- color_branches(MC_2019_all.dendro.noMa, k=4, col = c("black"), groupLabels = TRUE)
 MC_2019_all.dendro.noMa <- set(MC_2019_all.dendro.noMa, "labels_cex", 0.5)
 #Plot
 Colony_dendrog_plot.noMa <- plot(MC_2019_all.dendro.noMa, ylab = "Bray-Curtis Dissimilarity")
